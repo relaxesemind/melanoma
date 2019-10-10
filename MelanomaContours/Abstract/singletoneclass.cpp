@@ -1,0 +1,1 @@
+#include "singletoneclass.h"
