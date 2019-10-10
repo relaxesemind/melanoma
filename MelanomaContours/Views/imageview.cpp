@@ -27,7 +27,6 @@ QImage ImageView::getImage() const
 void ImageView::setImage(const QImage &value)
 {
     image = value;
-
     QPixmap pixmap = QPixmap::fromImage(value);
 
     if (item)

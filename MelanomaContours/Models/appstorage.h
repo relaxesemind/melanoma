@@ -5,6 +5,7 @@
 #include "Abstract/singletoneclass.h"
 
 #include <QVector>
+#include <QString>
 #include <QVector3D>
 #include <QMap>
 #include <utility>
@@ -22,7 +23,7 @@ class AppStorage : public SingletonClass<AppStorage>
     AppStorage();
 
 public:
-
+    QString imagePath;
 };
 
 #endif // APPSTORAGE_H
