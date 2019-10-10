@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "Common/opencv.h"
+
 namespace Ui {
 class MainWindow;
 }

@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = MelanomaContours
 TEMPLATE = app
@@ -33,7 +33,10 @@ SOURCES += \
     Models/appstorage.cpp \
     Managers/colorgenerator.cpp \
     Managers/managerslocator.cpp \
-    Managers/mathmanager.cpp
+    Managers/mathmanager.cpp \
+    Views/defaultcontrols.cpp \
+    Views/imageview.cpp \
+    Views/qcustomplot.cpp
 
 HEADERS += \
     Controllers/mainwindow.h \
@@ -44,7 +47,11 @@ HEADERS += \
     Managers/colorgenerator.h \
     Managers/managerslocator.h \
     Managers/mathmanager.h \
-    Common/opencv.h
+    Common/opencv.h \
+    Views/defaultcontrols.h \
+    Views/drawtool.h \
+    Views/imageview.h \
+    Views/qcustomplot.h
 
 FORMS += \
     Forms/mainwindow.ui

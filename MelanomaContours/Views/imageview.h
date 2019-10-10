@@ -2,7 +2,6 @@
 #define IMAGEVIEW_H
 
 #include "Views/drawtool.h"
-#include "Models/classmodel.h"
 
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
@@ -37,8 +36,6 @@ protected:
 
 public slots:
     void clearView();
-    void updateWithCurrentClass(const ClassModel& model);
-    void showAllClasses();
 
 signals:
 
@@ -49,24 +46,8 @@ private: //property
     QGraphicsPixmapItem *item;
     QImage image;
 
-///DrawingLogic
-    bool isReadyToDraw();
-    bool drawFlag;
-    QPointF previousPoint, startPoint;
-
-    QGraphicsRectItem *tempRect;
-    QGraphicsLineItem *tempLine;
-    QList<QGraphicsLineItem *> currentLine;
-    QRectF currentRect;
-
-
-
 private: //methods
     QPointF transformCoordinates(QPointF pos) const;
-    QPen currentPen();
-    QPolygonF polygonFromLine(QList<QGraphicsLineItem *> line);
-    QImage createSubImage(const QImage& image, const QRect & rect);
-    QImage createSubImage(const QImage& image, const QPainterPath & path);
 };
 
 #endif // IMAGEVIEW_H
