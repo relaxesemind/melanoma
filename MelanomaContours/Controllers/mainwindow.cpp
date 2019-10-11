@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "Models/appstorage.h"
+#include "Managers/managerslocator.h"
 #include <QFileDialog>
 #include <QDebug>
 
@@ -18,7 +19,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_loadImageAction_triggered()
 {
-    QString fileName = "C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
+    QString fileName = QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");  // "C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
     //QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");
     if (!fileName.isEmpty())
     {
@@ -32,37 +33,40 @@ void MainWindow::on_loadImageAction_triggered()
 void MainWindow::on_pushButton_clicked()
 {
     QString path = AppStorage::shared().imagePath;
+    QImage sourceImage = ui->imageView->getImage();
 
-    IplImage *image = cvLoadImage(path.toStdString().c_str(),1);
-    IplImage *gray = cvCreateImage( cvGetSize(image), IPL_DEPTH_8U, 1 );
-    IplImage *dst = cvCreateImage( cvGetSize(image), IPL_DEPTH_8U, 1 );
+    if (sourceImage.isNull())
+    {
+        return;
+    }
+
+    auto& helper = ManagersLocator::shared().helper;
+
+    Mat sourceMat = helper.QImageToCvMat(sourceImage);
+    Mat destMat(sourceMat.size(),sourceMat.type());
+    Mat src_gray;
+    Mat detected_edges;
+
+    cvtColor(sourceMat, src_gray, CV_BGR2GRAY);
+
+    blur( src_gray, detected_edges, Size(3,3) );
+    Canny( detected_edges, detected_edges, 40, 600, 5 );
+
+    destMat = Scalar::all(0);
+    sourceMat.copyTo( destMat, detected_edges);
+    QImage destImage = helper.QImageFromMat(destMat);
+
+    ui->imageView->setOverlayImage(destImage);
+}
 
 
-    // окно для отображения картинки
-   // cvNamedWindow("original",CV_WINDOW_AUTOSIZE);
-   // cvNamedWindow("gray",CV_WINDOW_AUTOSIZE);
-    cvNamedWindow("cvCanny",CV_WINDOW_AUTOSIZE);
+void MainWindow::on_horizontalSlider_valueChanged(int value)//opacity
+{
+    if (ui->imageView->getOverlayImage().isNull())
+    {
+        return;
+    }
 
-    // преобразуем в градации серого
-    cvCvtColor(image, gray, CV_RGB2GRAY);
-
-    // получаем границы
-//    cvCanny( const CvArr* image, CvArr* edges, double threshold1,
-//                         double threshold2, int  aperture_size CV_DEFAULT(3) );
-    cvCanny(gray, dst, 10, 700, 5);
-
-    // показываем картинки
-  //  cvShowImage("original",image);
-   // cvShowImage("gray",gray);
-    cvShowImage("cvCanny", dst );
-
-    // ждём нажатия клавиши
-    cvWaitKey(0);
-
-    // освобождаем ресурсы
-    cvReleaseImage(&image);
-    cvReleaseImage(&gray);
-    cvReleaseImage(&dst);
-    // удаляем окна
-    cvDestroyAllWindows();
+    qreal op = value / 100.;
+    ui->imageView->setOpacity(op);
 }

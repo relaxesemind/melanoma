@@ -25,6 +25,9 @@ public:
     QImage getImage() const;
 
     void setImage(const QImage &value);
+    void setOpacity(qreal value);
+    void setOverlayImage(const QImage &value);
+    QImage getOverlayImage() const;
 
 protected:
     void wheelEvent(QWheelEvent *event)override;
@@ -43,8 +46,9 @@ private: //property
 ///Main
     QGraphicsScene *scene;
     qreal currentScale;
-    QGraphicsPixmapItem *item;
-    QImage image;
+    qreal opacity;
+    QGraphicsPixmapItem *item, *overlayItem;
+    QImage image, overlayImage;
 
 private: //methods
     QPointF transformCoordinates(QPointF pos) const;

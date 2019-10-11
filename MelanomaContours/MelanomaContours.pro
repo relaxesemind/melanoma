@@ -36,7 +36,8 @@ SOURCES += \
     Managers/mathmanager.cpp \
     Views/defaultcontrols.cpp \
     Views/imageview.cpp \
-    Views/qcustomplot.cpp
+    Views/qcustomplot.cpp \
+    Managers/helper.cpp
 
 HEADERS += \
     Controllers/mainwindow.h \
@@ -51,7 +52,8 @@ HEADERS += \
     Views/defaultcontrols.h \
     Views/drawtool.h \
     Views/imageview.h \
-    Views/qcustomplot.h
+    Views/qcustomplot.h \
+    Managers/helper.h
 
 FORMS += \
     Forms/mainwindow.ui

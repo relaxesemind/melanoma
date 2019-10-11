@@ -11,6 +11,7 @@ ImageView::ImageView(QWidget *widget) : QGraphicsView(widget)
     this->setScene(scene);
     this->setAlignment(Qt::AlignCenter);
     currentScale = 1.0;
+    opacity = 1.0;
     item = nullptr;
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -45,10 +46,42 @@ void ImageView::setImage(const QImage &value)
     this->update();
 }
 
+void ImageView::setOpacity(qreal value)
+{
+    opacity = value;
+    overlayItem->setOpacity(opacity);
+}
+
 void ImageView::clearView()
 {
     scene->clear();
     item = nullptr;
+}
+
+QImage ImageView::getOverlayImage() const
+{
+    return overlayImage;
+}
+
+void ImageView::setOverlayImage(const QImage &value)
+{
+    overlayImage = value;
+    QPixmap pix = QPixmap::fromImage(value);
+
+    if (overlayItem)
+    {
+        scene->removeItem(overlayItem);
+        overlayItem = nullptr;
+    }
+
+    overlayItem = new QGraphicsPixmapItem(pix);
+    scene->addItem(overlayItem);
+
+    centerOn(overlayItem);
+    scene->setSceneRect(0,0,pix.width(),pix.height());
+    fitInView(item,Qt::KeepAspectRatio);
+
+    this->update();
 }
 
 QPointF ImageView::transformCoordinates(QPointF pos) const
