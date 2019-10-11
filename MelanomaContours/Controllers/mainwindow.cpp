@@ -4,6 +4,8 @@
 #include "Managers/managerslocator.h"
 #include <QFileDialog>
 #include <QDebug>
+#include <vector>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,7 +21,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_loadImageAction_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");  // "C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
+    QString fileName = "C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
     //QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");
     if (!fileName.isEmpty())
     {
@@ -54,8 +56,12 @@ void MainWindow::on_pushButton_clicked()
 
     destMat = Scalar::all(0);
     sourceMat.copyTo( destMat, detected_edges);
-    QImage destImage = helper.QImageFromMat(destMat);
 
+//    std::vector<std::vector<Point> > contours;
+//    std::vector<Vec4i> hierarchy;
+//    findContours( detected_edges, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE );
+
+    QImage destImage = helper.QImageFromMat(destMat);
     ui->imageView->setOverlayImage(destImage);
 }
 

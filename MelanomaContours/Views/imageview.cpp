@@ -13,6 +13,7 @@ ImageView::ImageView(QWidget *widget) : QGraphicsView(widget)
     currentScale = 1.0;
     opacity = 1.0;
     item = nullptr;
+    overlayItem = nullptr;
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setStyleSheet(QString(
@@ -56,6 +57,7 @@ void ImageView::clearView()
 {
     scene->clear();
     item = nullptr;
+    overlayItem = nullptr;
 }
 
 QImage ImageView::getOverlayImage() const
