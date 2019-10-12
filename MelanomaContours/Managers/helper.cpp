@@ -80,7 +80,18 @@ cv::Mat Helper::QPixmapToCvMat(const QPixmap &inPixmap, bool inCloneImageData)
     return QImageToCvMat( inPixmap.toImage(), inCloneImageData );
 }
 
-QImage Helper::QImageFromMat(const cv::Mat &mat)
+QImage Helper::QImageFromMat(const cv::Mat &img)
 {
-    return QImage((uchar*) mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
+    return QImage((uchar*) img.data, img.cols, img.rows, img.step, QImage::Format_RGB888);
 }
+
+
+
+
+
+
+
+
+
+
+

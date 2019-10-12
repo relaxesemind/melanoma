@@ -42,40 +42,13 @@ void MainWindow::on_pushButton_clicked()
         return;
     }
 
-    auto& helper = ManagersLocator::shared().helper;
-
-    Mat sourceMat = helper.QImageToCvMat(sourceImage);
-    Mat destMat(sourceMat.size(),sourceMat.type());
-    Mat src_gray;
-    Mat detected_edges;
-    Mat binar;
-
-    cvtColor(sourceMat, src_gray, CV_BGR2GRAY);
-
-    bilateralFilter(src_gray, detected_edges, 2, 10, 15);
-
-    Mat element = getStructuringElement(MORPH_RECT, Size(4,4));
-
-    dilate(detected_edges, detected_edges, element);
-    erode(detected_edges, detected_edges, element);
-
-//    Laplacian(detected_edges, detected_edges, CV_8U, 3, 1, 0);
-
-//    threshold(src_gray, binar, 127, 255, CV_THRESH_BINARY);
-
-    namedWindow( "Display window", WINDOW_AUTOSIZE ); // Create a window for display.
-    imshow( "Display window", detected_edges );
-
-    Canny( detected_edges, detected_edges, 40, 600, 5 );
-
-    destMat = Scalar::all(0);
-    sourceMat.copyTo( destMat, detected_edges);
+    Mat res = ManagersLocator::shared().mathManager.imagePreparation(sourceImage);
 
 //    std::vector<std::vector<Point> > contours;
 //    std::vector<Vec4i> hierarchy;
 //    findContours( detected_edges, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE );
 
-    QImage destImage = helper.QImageFromMat(destMat);
+    QImage destImage = ManagersLocator::shared().helper.QImageFromMat(res);
     ui->imageView->setOverlayImage(destImage);
 }
 

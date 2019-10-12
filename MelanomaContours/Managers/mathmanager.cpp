@@ -2,6 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <QDebug>
+#include "helper.h"
 
 void MathManager::rgb2lab(float R, float G, float B, float &l_s, float &a_s, float &b_s)
 {
@@ -88,6 +89,37 @@ void MathManager::rgb2hsv(QRgb q, float &h, float &s, float &v)
     }
 
     s = max == 0 ? 0 : 1 - min / max;
+}
+
+cv::Mat MathManager::imagePreparation(const QImage &sourceImage)
+{
+    Helper helper;
+    cv::Mat sourceMat = helper.QImageToCvMat(sourceImage);
+    cv::Mat destMat(sourceMat.size(),sourceMat.type());
+    cv::Mat src_gray;
+    cv::Mat detected_edges;
+//    cv::Mat binar;
+
+    cvtColor(sourceMat, src_gray, CV_BGR2GRAY);
+
+    bilateralFilter(src_gray, detected_edges, 2, 10, 15);
+
+    cv::Mat element = getStructuringElement(cv::MORPH_RECT, cv::Size(4,4));
+
+    cv::dilate(detected_edges, detected_edges, element);
+    cv::erode(detected_edges, detected_edges, element);
+
+//    Laplacian(detected_edges, detected_edges, CV_8U, 3, 1, 0);
+//    threshold(src_gray, binar, 127, 255, CV_THRESH_BINARY);
+//    cv::namedWindow( "Display window", cv::WINDOW_AUTOSIZE ); // Create a window for display.
+//    cv::imshow( "Display window", detected_edges );
+
+    cv::Canny( detected_edges, detected_edges, 40, 600, 5 );
+
+    destMat = cv::Scalar::all(0);
+    sourceMat.copyTo( destMat, detected_edges);
+
+    return destMat;
 }
 
 
