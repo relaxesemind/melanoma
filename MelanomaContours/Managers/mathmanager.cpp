@@ -2,6 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <QDebug>
+#include <QFloat16>
 #include "helper.h"
 
 void MathManager::rgb2lab(float R, float G, float B, float &l_s, float &a_s, float &b_s)
@@ -120,6 +121,89 @@ cv::Mat MathManager::imagePreparation(const QImage &sourceImage)
     sourceMat.copyTo( destMat, detected_edges);
 
     return destMat;
+}
+
+QImage MathManager::dummyThreshold(const QImage &src)
+{
+    const qint32 w = src.width();
+    const qint32 h = src.height();
+    QImage ret_img(w,h,src.format());
+
+    for (qint32 y = 0; y < h; ++y)
+    {
+        for (qint32 x = 0; x < w; ++x)
+        {
+            QRgb pixel = src.pixel(x,y);
+            ret_img.setPixel(x, y, pixel == 0xFF000000 ? 0xFF000000 : 0xFFFFFFFF);
+        }
+    }
+
+    return ret_img;
+}
+
+uint toGrayScale(const QImage& image,qint32 x ,qint32 y)
+{//I = 0.2125R + 0.7154G + 0.0721B
+ //return GrayScale pixel(x,y) from image with half precision
+    QRgb q = image.pixel(x,y);
+    qreal real = qRed(q) * 0.2125F + qGreen(q) * 0.7154F + qBlue(q) * 0.0721F;
+    return static_cast<uint> (real);
+}
+
+QImage MathManager::thresholdBradley(const QImage &src)
+{
+    const qint32 w = src.width();
+    const qint32 h = src.height();
+    QImage ret_img(w,h,src.format());
+    const qint32 S = w / 8;
+    const float t = 0.15F;
+    qint32 s2 = S / 2;
+    //get integral_image
+    //S(x, y) = I(x, y) + S(x-1, y) + S(x, y-1) – S(x-1, y-1);
+    QVector<QVector<quint64>> integral_image (h,QVector<quint64>(w,0));
+
+    for (qint32 x = 0; x < w; ++x) integral_image[0][x] = toGrayScale(src,x,0);
+    for (qint32 y = 0; y < h; ++y) integral_image[y][0] = toGrayScale(src,0,y);
+
+    for (qint32 y = 1; y < h; ++y)
+    {
+        for (qint32 x = 1; x < w; ++x)
+        {
+            integral_image[y][x] = toGrayScale(src,x,y) + integral_image[y][x-1]
+                    + integral_image[y-1][x] - integral_image[y-1][x-1];
+        }
+    }
+
+    for (qint32 y = 0; y < h; ++y)
+    {
+        for (qint32 x = 0; x < w; ++x)
+        {
+            qint32 x1 = x - s2;
+            qint32 x2 = x + s2;
+            qint32 y1 = y - s2;
+            qint32 y2 = y + s2;
+
+            if (x1 < 0) x1 = 0;
+            if (x2 >= w) x2 = w - 1;
+            if (y1 < 0) y1 = 0;
+            if (y2 >= h) y2 = h-1;
+
+            qint32 count = (x2-x1)*(y2-y1);
+            //S(x, y) = S(A) + S(D) – S(B) – S(C)
+            qint32 sum = integral_image[y2][x2] - integral_image[y1][x2]
+                    - integral_image[y2][x1] + integral_image[y1][x1];
+            if (toGrayScale(src,x,y) * count < (sum * (1.0F - t)))
+            {
+                ret_img.setPixel(x, y, 0xFFFFFF);
+            }
+            else
+            {
+                ret_img.setPixel(x, y ,0x0);
+            }
+
+        }
+    }
+
+    return ret_img;
 }
 
 

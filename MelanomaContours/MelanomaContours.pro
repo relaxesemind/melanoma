@@ -37,7 +37,9 @@ SOURCES += \
     Views/defaultcontrols.cpp \
     Views/imageview.cpp \
     Views/qcustomplot.cpp \
-    Managers/helper.cpp
+    Managers/helper.cpp \
+    Managers/skiletizationfilter.cpp \
+    Managers/utils.cpp
 
 HEADERS += \
     Controllers/mainwindow.h \
@@ -53,7 +55,9 @@ HEADERS += \
     Views/drawtool.h \
     Views/imageview.h \
     Views/qcustomplot.h \
-    Managers/helper.h
+    Managers/helper.h \
+    Managers/skiletizationfilter.h \
+    Managers/utils.h
 
 FORMS += \
     Forms/mainwindow.ui

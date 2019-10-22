@@ -22,6 +22,8 @@ public:
     void rgb2lab( float R, float G, float B, float & l_s, float &a_s, float &b_s );
     void rgb2hsv(QRgb q, float &h, float &s, float &v);
     cv::Mat imagePreparation(const QImage& sourceImage);
+    QImage dummyThreshold(const QImage& src);
+    QImage thresholdBradley(const QImage& src);
 };
 
 #endif // MATHMANAGER_H

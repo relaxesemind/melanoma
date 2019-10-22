@@ -21,7 +21,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_loadImageAction_triggered()
 {
-    QString fileName = "C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
+    QString fileName = QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");//"C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
     //QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");
     if (!fileName.isEmpty())
     {
@@ -42,14 +42,20 @@ void MainWindow::on_pushButton_clicked()
         return;
     }
 
-    Mat res = ManagersLocator::shared().mathManager.imagePreparation(sourceImage);
+//    Mat res = ManagersLocator::shared().mathManager.imagePreparation(sourceImage);
+//    QImage destImage = ManagersLocator::shared().helper.QImageFromMat(res);
 
-//    std::vector<std::vector<Point> > contours;
-//    std::vector<Vec4i> hierarchy;
-//    findContours( detected_edges, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE );
+//    ui->imageView->setImage(destImage);
+  //  QImage binarDestImage = ManagersLocator::shared().mathManager.dummyThreshold(destImage);
+//    ui->imageView->setImage(destImage);
 
-    QImage destImage = ManagersLocator::shared().helper.QImageFromMat(res);
-    ui->imageView->setOverlayImage(destImage);
+//    ManagersLocator::shared().skeletFilter.doFilter(destImage);
+   // ui->imageView->setOverlayImage(binarDestImage);
+
+    QImage bin = ManagersLocator::shared().mathManager.thresholdBradley(sourceImage);
+//    ui->imageView->setImage(bin);
+    ManagersLocator::shared().skeletFilter.doFilter(bin);
+    ui->imageView->setOverlayImage(bin);
 }
 
 

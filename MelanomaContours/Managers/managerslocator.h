@@ -5,6 +5,7 @@
 #include "colorgenerator.h"
 #include "mathmanager.h"
 #include "helper.h"
+#include "skiletizationfilter.h"
 
 
 class ManagersLocator : public SingletonClass<ManagersLocator>
@@ -16,6 +17,7 @@ public:
     ColorGenerator<> colorGenerator;
     MathManager mathManager;
     Helper helper;
+    SkiletizationFilter skeletFilter;
 };
 
 #endif // MANAGERSLOCATOR_H
