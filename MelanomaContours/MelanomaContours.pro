@@ -14,6 +14,7 @@ TEMPLATE = app
 DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++14
+CONFIG += console
 
 INCLUDEPATH += open_cv/include
 
@@ -57,7 +58,8 @@ HEADERS += \
     Views/qcustomplot.h \
     Managers/helper.h \
     Managers/skiletizationfilter.h \
-    Managers/utils.h
+    Managers/utils.h \
+    Models/single_area.h
 
 FORMS += \
     Forms/mainwindow.ui

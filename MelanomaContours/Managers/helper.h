@@ -6,6 +6,7 @@
 #include <QImage>
 #include <QDebug>
 #include <QPixmap>
+#include <vector>
 
 
 class Helper
@@ -16,6 +17,11 @@ public:
     cv::Mat QImageToCvMat( const QImage &inImage, bool inCloneImageData = true );
     cv::Mat QPixmapToCvMat( const QPixmap &inPixmap, bool inCloneImageData = true );
     QImage  QImageFromMat(const cv::Mat& mat);
+    QImage  gaussianBlur(const cv::Mat& mat);
+    void findLines(const QImage& binarImage);
+
+private:
+    void fill(const QImage& img, std::vector<std::vector<qint64>>& labels , qint32 _x, qint32 _y, qint64 L);
 
 };
 

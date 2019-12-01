@@ -9,6 +9,7 @@
 #include <QVector3D>
 #include <QMap>
 #include <utility>
+#include "Models/single_area.h"
 
 
 enum ColorModel
@@ -24,6 +25,7 @@ class AppStorage : public SingletonClass<AppStorage>
 
 public:
     QString imagePath;
+    QVector<S_area> lines;
 };
 
 #endif // APPSTORAGE_H

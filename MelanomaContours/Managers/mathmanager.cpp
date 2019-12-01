@@ -153,9 +153,9 @@ QImage MathManager::thresholdBradley(const QImage &src)
 {
     const qint32 w = src.width();
     const qint32 h = src.height();
-    QImage ret_img(w,h,src.format());
-    const qint32 S = w / 8;
-    const float t = 0.15F;
+    QImage ret_img(w,h,QImage::Format_RGB32);
+    const qint32 S = w / 14;
+    const float t = 0.12F;
     qint32 s2 = S / 2;
     //get integral_image
     //S(x, y) = I(x, y) + S(x-1, y) + S(x, y-1) – S(x-1, y-1);
