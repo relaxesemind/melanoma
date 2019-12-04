@@ -40,7 +40,9 @@ SOURCES += \
     Views/qcustomplot.cpp \
     Managers/helper.cpp \
     Managers/skiletizationfilter.cpp \
-    Managers/utils.cpp
+    Managers/utils.cpp \
+    Managers/paramscalculator.cpp \
+    Models/single_area.cpp
 
 HEADERS += \
     Controllers/mainwindow.h \
@@ -59,7 +61,8 @@ HEADERS += \
     Managers/helper.h \
     Managers/skiletizationfilter.h \
     Managers/utils.h \
-    Models/single_area.h
+    Models/single_area.h \
+    Managers/paramscalculator.h
 
 FORMS += \
     Forms/mainwindow.ui

@@ -59,7 +59,9 @@ void MainWindow::on_loadImageAction_triggered()
         AppStorage::shared().imagePath = fileName;
         QPixmap pixmap;
         pixmap.load(fileName);
-        ui->imageView->setImage(pixmap.toImage());
+        QImage sourceImage = pixmap.toImage();
+        AppStorage::shared().sourceImage = sourceImage;
+        ui->imageView->setImage(sourceImage);
     }
 }
 
@@ -81,9 +83,10 @@ void MainWindow::on_pushButton_clicked()
 //    ui->imageView->setImage(sharpen);
 
     QImage binarImage = ManagersLocator::shared().mathManager.thresholdBradley(sourceImage);
+//     ui->imageView->setImage(binarImage);
 
     ManagersLocator::shared().skeletFilter.doFilter(binarImage);
-//     ui->imageView->setImage(binarImage);
+
 
     helper.findLines(binarImage);
 
@@ -112,7 +115,7 @@ void MainWindow::on_pushButton_clicked()
 
 
 
-
+    ManagersLocator::shared().paramsCalc.calculateAllParams();
 
 
 

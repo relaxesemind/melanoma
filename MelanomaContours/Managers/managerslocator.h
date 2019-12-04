@@ -6,6 +6,7 @@
 #include "mathmanager.h"
 #include "helper.h"
 #include "skiletizationfilter.h"
+#include "paramscalculator.h"
 
 
 class ManagersLocator : public SingletonClass<ManagersLocator>
@@ -18,6 +19,7 @@ public:
     MathManager mathManager;
     Helper helper;
     SkiletizationFilter skeletFilter;
+    ParamsCalculator paramsCalc;
 };
 
 #endif // MANAGERSLOCATOR_H

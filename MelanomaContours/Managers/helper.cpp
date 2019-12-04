@@ -143,7 +143,14 @@ void Helper::findLines(const QImage &binarImage)
       }
     }
 //     qDebug() << V.size();
-    AppStorage::shared().lines = V;
+
+    for (int i = 0; i < V.size(); ++i)
+    {
+        if (V[i].Points.size() > 4)
+        {
+            AppStorage::shared().lines.append(V[i]);
+        }
+    }
 }
 
 void Helper::fill(const QImage &img, std::vector<std::vector<qint64> > &labels, qint32 _x, qint32 _y, qint64 L)
