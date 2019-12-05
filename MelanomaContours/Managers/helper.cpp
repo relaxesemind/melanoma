@@ -2,6 +2,7 @@
 #include <QStack>
 #include <QPoint>
 #include <iostream>
+#include <algorithm>
 #include "Models/single_area.h"
 #include "Models/appstorage.h"
 
@@ -143,14 +144,67 @@ void Helper::findLines(const QImage &binarImage)
       }
     }
 //     qDebug() << V.size();
+    int index = 0;
 
     for (int i = 0; i < V.size(); ++i)
     {
         if (V[i].Points.size() > 4)
         {
+            V[i].id = index++;
             AppStorage::shared().lines.append(V[i]);
         }
     }
+}
+
+QVector<QPointF> Helper::preparePointsForGraph(int type, int factor)
+{
+    QVector<QPointF> points;
+    auto& storage = AppStorage::shared();
+
+    if (storage.lines.isEmpty() or factor == 0)
+    {
+        return points;
+    }
+
+    qreal averageValue = 0;
+
+    switch (type)
+    {
+    case 0: averageValue = storage.averageLenght; break;
+    case 1: averageValue = storage.averageThick; break;
+    case 2: averageValue = storage.averageColor.rgb(); break;
+    case 3: averageValue = storage.averageAngle; break;
+    default:
+        break;
+    }
+
+    int count = 0;
+
+    std::for_each(storage.lines.begin(), storage.lines.end(),[&](S_area& line)
+    {
+        if (++count % factor)
+        {
+            return ;
+        }
+
+        qreal value = 0;
+        int column = 0;
+        QPointF point;
+        switch (type)
+        {
+        case 0: value = line.getLenght(); break;
+        case 1: value = line.thickness; break;
+        case 2: value = line.color.rgb(); break;
+        case 3: value = line.getAngle(); break;
+        default:
+            break;
+        }
+
+        qreal delta = value - averageValue;
+        points.append(QPointF(line.id, delta));
+    });
+
+    return points;
 }
 
 void Helper::fill(const QImage &img, std::vector<std::vector<qint64> > &labels, qint32 _x, qint32 _y, qint64 L)

@@ -41,7 +41,8 @@ void ParamsCalculator::calculateAllParams()
        line.color = QColor::fromRgbF(r / scale, g / scale, b / scale);
        averageAngle += line.getAngle();
        averageLenght += line.getLenght();
-       line.thickness = line.getLenght() * 0.38;
+       line.thickness = line.getLenght() * 0.12 * (1 + rand() % 2);
+       averageThick += line.thickness;
        QRgb asd = line.color.rgb();
        r1 += qRed(asd);
        g1 += qGreen(asd);
@@ -51,7 +52,7 @@ void ParamsCalculator::calculateAllParams()
     averageAngle /= lines.size();
     averageLenght /= lines.size();
     averageColor = QColor::fromRgbF(r1 / scale1, g1 / scale1, b1 / scale1);
-    averageThick = averageLenght * 0.38;
+    averageThick /= lines.size();
 
     storage.averageAngle = averageAngle;
     storage.averageLenght = averageLenght;

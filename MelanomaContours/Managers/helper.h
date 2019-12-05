@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QPixmap>
 #include <vector>
+#include <QVector>
 
 
 class Helper
@@ -19,6 +20,7 @@ public:
     QImage  QImageFromMat(const cv::Mat& mat);
     QImage  gaussianBlur(const cv::Mat& mat);
     void findLines(const QImage& binarImage);
+    QVector<QPointF> preparePointsForGraph(int type, int factor = 3);
 
 private:
     void fill(const QImage& img, std::vector<std::vector<qint64>>& labels , qint32 _x, qint32 _y, qint64 L);

@@ -113,19 +113,41 @@ void ImageView::wheelEvent(QWheelEvent *event)
      }
 }
 
+bool pressed = false;
+int start_x = 0;
+int start_y = 0;
+
 void ImageView::mouseMoveEvent(QMouseEvent *event)
 {
-
+    if (pressed)
+    {
+        item->setPos(event->pos() - QPoint(start_x, start_y));
+        overlayItem->setPos(event->pos() - QPoint(start_x, start_y));
+    }
 }
 
 void ImageView::mousePressEvent(QMouseEvent *event)
 {
-
+    if (event->button() == Qt::RightButton)
+    {
+        pressed = true;
+        start_x = event->x();
+        start_y = event->y();
+        setCursor(Qt::ClosedHandCursor);
+        event->accept();
+    }
 }
 
 void ImageView::mouseReleaseEvent(QMouseEvent *event)
 {
+    if (event->button() == Qt::RightButton)
+    {
+        pressed = false;
+        setCursor(Qt::ArrowCursor);
+        event->accept();
+    }
 
+    event->ignore();
 }
 
 void ImageView::resizeEvent(QResizeEvent *event)

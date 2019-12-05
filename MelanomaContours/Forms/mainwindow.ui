@@ -29,13 +29,13 @@
      <widget class="QTabWidget" name="tabWidget">
       <property name="minimumSize">
        <size>
-        <width>400</width>
+        <width>200</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>400</width>
+        <width>200</width>
         <height>16777215</height>
        </size>
       </property>
@@ -43,18 +43,34 @@
        <attribute name="title">
         <string>Tab 1</string>
        </attribute>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QWidget" name="">
         <property name="geometry">
          <rect>
-          <x>50</x>
+          <x>10</x>
           <y>20</y>
-          <width>151</width>
-          <height>21</height>
+          <width>171</width>
+          <height>81</height>
          </rect>
         </property>
-        <property name="text">
-         <string>PushButton</string>
-        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="text">
+            <string>Расчитать</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_2">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Показать графики</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="QWidget" name="tab_2">

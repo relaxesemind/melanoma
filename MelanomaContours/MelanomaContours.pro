@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -14,7 +14,7 @@ TEMPLATE = app
 DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++14
-CONFIG += console
+#CONFIG += console
 
 INCLUDEPATH += open_cv/include
 
@@ -42,7 +42,9 @@ SOURCES += \
     Managers/skiletizationfilter.cpp \
     Managers/utils.cpp \
     Managers/paramscalculator.cpp \
-    Models/single_area.cpp
+    Models/single_area.cpp \
+    Controllers/diagram.cpp \
+    Managers/grapher.cpp
 
 HEADERS += \
     Controllers/mainwindow.h \
@@ -62,7 +64,10 @@ HEADERS += \
     Managers/skiletizationfilter.h \
     Managers/utils.h \
     Models/single_area.h \
-    Managers/paramscalculator.h
+    Managers/paramscalculator.h \
+    Controllers/diagram.h \
+    Managers/grapher.h
 
 FORMS += \
-    Forms/mainwindow.ui
+    Forms/mainwindow.ui \
+    Forms/diagram.ui
