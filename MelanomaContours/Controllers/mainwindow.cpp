@@ -3,6 +3,7 @@
 #include "Models/appstorage.h"
 #include "Managers/managerslocator.h"
 #include "Controllers/diagram.h"
+#include "Managers/calculatingprocess.h"
 #include <QFileDialog>
 #include <QDebug>
 #include <vector>
@@ -10,19 +11,33 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    threadPool(new QThreadPool(this))
 {
     ui->setupUi(this);
+    spinner = nullptr;
+    ui->progressBar->setStyleSheet(QString(
+                           "QProgressBar:horizontal {"
+//                           "border: 1px solid gray;"
+                           "border-radius: 3px;"
+                           "background: white;"
+                           "padding: 1px;"
+                           "}"
+                           "QProgressBar::chunk:horizontal {"
+                           "background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 0.5, stop: 0 #FF893D, stop: 1 white);"
+                           "}"
+    ));
 }
 
 MainWindow::~MainWindow()
 {
+    delete threadPool;
     delete ui;
 }
 
 void MainWindow::on_loadImageAction_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png"); //"C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
+    QString fileName = "C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
     //QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");
     if (!fileName.isEmpty())
     {
@@ -37,45 +52,7 @@ void MainWindow::on_loadImageAction_triggered()
 
 void MainWindow::on_pushButton_clicked()
 {
-    QString path = AppStorage::shared().imagePath;
-    QImage sourceImage = ui->imageView->getImage();
-
-    if (sourceImage.isNull())
-    {
-        return;
-    }
-
-    auto& helper = ManagersLocator::shared().helper;
-
-    cv::Mat src = helper.QImageToCvMat(sourceImage);
-
-    QImage  blurredImage = helper.gaussianBlur(src);
-//    ui->imageView->setImage(sharpen);
-
-    QImage binarImage = ManagersLocator::shared().mathManager.thresholdBradley(sourceImage);
-//     ui->imageView->setImage(binarImage);
-
-    ManagersLocator::shared().skeletFilter.doFilter(binarImage);
-    helper.findLines(binarImage);
-    auto& lines = AppStorage::shared().lines;
-    QImage copy(binarImage.size(), QImage::Format_ARGB32);
-    copy.fill(QColor("transparent"));
-    for (int i = 0; i < lines.count(); ++i)
-    {
-        auto& line = lines[i];
-        QColor color = ManagersLocator::shared().colorGenerator.get();
-        for (int j = 0; j < line.Points.size(); ++j)
-        {
-            QPoint point = line.Points[j];
-            copy.setPixel(point.x(),point.y(), color.rgb());
-        }
-    }
-    ui->imageView->setOverlayImage(copy);
-    ManagersLocator::shared().paramsCalc.calculateAllParams();
-    ui->pushButton_2->setEnabled(true);
-
-
-//    ui->imageView->setOverlayImage(binarImage);
+    runMainProcess();
 }
 
 
@@ -88,11 +65,69 @@ void MainWindow::on_horizontalSlider_valueChanged(int value)//opacity
 
     qreal op = value / 100.;
     ui->imageView->setOpacity(op);
-
-
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
     (new Diagram())->show();
 }
+
+void MainWindow::runMainProcess()
+{
+    QImage sourceImage = AppStorage::shared().sourceImage;
+    CalculatingProcess *process = new CalculatingProcess(sourceImage);
+
+    connect(process, &CalculatingProcess::isRunning, this,[this](bool isRunning)
+    {
+        if (isRunning)
+        {
+            spinner = new WaitingSpinnerWidget(ui->imageView, Qt::ApplicationModal, true);
+            spinner->setRoundness(70.0);
+            spinner->setMinimumTrailOpacity(15.0);
+            spinner->setTrailFadePercentage(70.0);
+            spinner->setNumberOfLines(12);
+            spinner->setLineLength(12);
+            spinner->setLineWidth(4);
+            spinner->setInnerRadius(10);
+            spinner->setRevolutionsPerSecond(1);
+            spinner->start();
+            ui->pushButton->setEnabled(false);
+            ui->pushButton_2->setEnabled(false);
+        }
+        else if (spinner != nullptr)
+        {
+            spinner->stop();
+            delete spinner;
+            spinner = nullptr;
+        }
+    });
+
+    connect(process, &CalculatingProcess::isDone, this, [this](bool isDone, QImage image){
+        if (!isDone)
+        {
+            return ;
+        }
+        ui->imageView->setOverlayImage(image);
+        ui->pushButton_2->setEnabled(true);
+        ui->pushButton->setEnabled(true);
+    });
+
+    connect(process, &CalculatingProcess::progress, this, [this](int percent){
+        ui->progressBar->setValue(percent);
+    });
+
+    threadPool->start(process);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

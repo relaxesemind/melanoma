@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QFloat16>
 #include "helper.h"
+#include "Common/consts.h"
 
 void MathManager::rgb2lab(float R, float G, float B, float &l_s, float &a_s, float &b_s)
 {
@@ -149,14 +150,17 @@ uint toGrayScale(const QImage& image,qint32 x ,qint32 y)
     return static_cast<uint> (real);
 }
 
-QImage MathManager::thresholdBradley(const QImage &src)
+QImage MathManager::thresholdBradley(const QImage &src, bool invert)
 {
     const qint32 w = src.width();
     const qint32 h = src.height();
     QImage ret_img(w,h,QImage::Format_RGB32);
-    const qint32 S = w / 14;
-    const float t = 0.06F;
+    const qint32 S = w / Global::bredleyRotSfactor;
+    const float t = Global::breadleyRot_f_factor;
     qint32 s2 = S / 2;
+    const int blackPixel = invert ? 0xFFFFFF : 0x0;
+    const int whitePixel = invert ? 0x0 : 0xFFFFFF;
+
     //get integral_image
     //S(x, y) = I(x, y) + S(x-1, y) + S(x, y-1) – S(x-1, y-1);
     QVector<QVector<quint64>> integral_image (h,QVector<quint64>(w,0));
@@ -185,7 +189,7 @@ QImage MathManager::thresholdBradley(const QImage &src)
             if (x1 < 0) x1 = 0;
             if (x2 >= w) x2 = w - 1;
             if (y1 < 0) y1 = 0;
-            if (y2 >= h) y2 = h-1;
+            if (y2 >= h) y2 = h - 1;
 
             qint32 count = (x2-x1)*(y2-y1);
             //S(x, y) = S(A) + S(D) – S(B) – S(C)
@@ -193,17 +197,22 @@ QImage MathManager::thresholdBradley(const QImage &src)
                     - integral_image[y2][x1] + integral_image[y1][x1];
             if (toGrayScale(src,x,y) * count < (sum * (1.0F - t)))
             {
-                ret_img.setPixel(x, y, 0xFFFFFF);
+                ret_img.setPixel(x, y, whitePixel);
             }
             else
             {
-                ret_img.setPixel(x, y ,0x0);
+                ret_img.setPixel(x, y, blackPixel);
             }
 
         }
     }
 
     return ret_img;
+}
+
+QImage MathManager::pigmentArea(const QImage &image)
+{
+    return image;
 }
 
 

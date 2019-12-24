@@ -2,7 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QThreadPool>
 #include "Common/opencv.h"
+#include "Views/waitingspinnerwidget.h"
 
 using namespace cv;
 
@@ -29,6 +31,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QThreadPool *threadPool;
+    WaitingSpinnerWidget *spinner;
+    void runMainProcess();
 };
 
 #endif // MAINWINDOW_H

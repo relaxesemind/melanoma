@@ -44,7 +44,10 @@ SOURCES += \
     Managers/paramscalculator.cpp \
     Models/single_area.cpp \
     Controllers/diagram.cpp \
-    Managers/grapher.cpp
+    Managers/grapher.cpp \
+    Views/waitingspinnerwidget.cpp \
+    Managers/calculatingprocess.cpp \
+    Views/animatedprogressbar.cpp
 
 HEADERS += \
     Controllers/mainwindow.h \
@@ -66,7 +69,10 @@ HEADERS += \
     Models/single_area.h \
     Managers/paramscalculator.h \
     Controllers/diagram.h \
-    Managers/grapher.h
+    Managers/grapher.h \
+    Views/waitingspinnerwidget.h \
+    Managers/calculatingprocess.h \
+    Views/animatedprogressbar.h
 
 FORMS += \
     Forms/mainwindow.ui \

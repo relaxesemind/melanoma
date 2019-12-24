@@ -5,6 +5,7 @@
 #include <QVector3D>
 #include <QVector2D>
 #include <QImage>
+#include <QPolygon>
 #include "Models/appstorage.h"
 #include "Common/opencv.h"
 
@@ -23,7 +24,8 @@ public:
     void rgb2hsv(QRgb q, float &h, float &s, float &v);
     cv::Mat imagePreparation(const QImage& sourceImage);
     QImage dummyThreshold(const QImage& src);
-    QImage thresholdBradley(const QImage& src);
+    QImage thresholdBradley(const QImage& src, bool invert = false);
+    QImage pigmentArea(const QImage& image);
 };
 
 #endif // MATHMANAGER_H

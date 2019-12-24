@@ -215,6 +215,17 @@ void Helper::fill(const QImage &img, std::vector<std::vector<qint64> > &labels, 
     const qint32 w = img.width();
     const qint32 h = img.height();
 
+    auto check = [&](QPoint point)
+    {
+        qint32 x = point.x();
+        qint32 y = point.y();
+        if ((x + 1 < w)&&(x > 0)&&(y > 0)&&(y + 1 < h)
+                &&(img.pixel(x,y) == qRgb(255,255,255))&&(labels[y][x] == 0))
+        {
+            depth.push(point);
+        }
+    };
+
     while (!depth.empty())
     {
         t = depth.pop();
@@ -222,22 +233,11 @@ void Helper::fill(const QImage &img, std::vector<std::vector<qint64> > &labels, 
         qint32 y = t.ry();
         labels[y][x] = L; // filling.
 
-        auto check = [&](QPoint point)
-        {
-            qint32 x = point.x();
-            qint32 y = point.y();
-            if ((x + 1 < w)&&(x > 0)&&(y > 0)&&(y + 1 < h)
-                    &&(img.pixel(x,y) == qRgb(255,255,255))&&(labels[y][x] == 0))
-            {
-                depth.push(point);
-            }
-        };
-
         check({x + 1, y});
         check({x, y + 1});
         check({x - 1, y});
         check({x, y - 1});
-
+        //8d - connect
         check({x + 1, y + 1});
         check({x - 1, y - 1});
         check({x + 1, y - 1});
