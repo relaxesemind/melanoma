@@ -69,15 +69,20 @@ QImage ImageView::getOverlayImage() const
 
 void ImageView::drawSectors(QPoint areaCenter, qreal mainRadius, int numberOfRadius, int numberOfSectors)
 {
+    if (numberOfRadius < 1 || numberOfSectors < 1) return;
     removeCircles();
-    if (numberOfRadius < 1) return;
+    removeRadiuses();
 
-//    addCircleToScene(areaCenter, mainRadius);
     qreal maxR = mainRadius;
     qreal stepR = maxR / numberOfRadius;
+    qreal stepAngle = M_PI * 2. / numberOfSectors;
     for (int i = 0; i < numberOfRadius; ++i)
     {
         addCircleToScene(areaCenter, stepR * (1 + i));
+    }
+    for (int i = 0; i < numberOfSectors; ++i)
+    {
+        addRadiusToScene(areaCenter, mainRadius, stepAngle * (1 + i));
     }
 }
 
@@ -117,6 +122,16 @@ void ImageView::removeCircles()
     circles.clear();
 }
 
+void ImageView::removeRadiuses()
+{
+    for (int i = 0; i < radiuses.count(); ++i)
+    {
+        scene->removeItem(radiuses[i]);
+    }
+
+    radiuses.clear();
+}
+
 QGraphicsEllipseItem *ImageView::addCircleToScene(QPoint center, qreal radius)
 {
     QPen pen((QColor(Qt::red)));
@@ -130,6 +145,21 @@ QGraphicsEllipseItem *ImageView::addCircleToScene(QPoint center, qreal radius)
 
     scene->addItem(item);
     circles.push_back(item);
+    return item;
+}
+
+QGraphicsLineItem *ImageView::addRadiusToScene(QPoint center, qreal radius, qreal angle)
+{
+    qreal x2 = radius * std::cos(angle);
+    qreal y2 = radius * std::sin(angle);
+
+    QGraphicsLineItem *item = new QGraphicsLineItem(center.x(), center.y(), x2 + center.x(), y2 + center.y());
+    QPen pen((QColor(Qt::red)));
+    pen.setWidth(3);
+
+    item->setPen(pen);
+    scene->addItem(item);
+    radiuses.push_back(item);
     return item;
 }
 

@@ -4,6 +4,7 @@
 #include "Managers/managerslocator.h"
 #include "Controllers/diagram.h"
 #include "Managers/calculatingprocess.h"
+#include "Common/consts.h"
 #include <QFileDialog>
 #include <QDebug>
 #include <vector>
@@ -16,17 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     spinner = nullptr;
-    ui->progressBar->setStyleSheet(QString(
-                           "QProgressBar:horizontal {"
-//                           "border: 1px solid gray;"
-                           "border-radius: 3px;"
-                           "background: white;"
-                           "padding: 1px;"
-                           "}"
-                           "QProgressBar::chunk:horizontal {"
-                           "background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 0.5, stop: 0 #FF893D, stop: 1 white);"
-                           "}"
-    ));
+    ui->progressBar->setStyleSheet(Global::progressBarStyle);
 }
 
 MainWindow::~MainWindow()
@@ -59,7 +50,6 @@ void MainWindow::on_pushButton_clicked()
     ui->imageView->drawSectors(pair.first, pair.second);
     runMainProcess();
 }
-
 
 void MainWindow::on_horizontalSlider_valueChanged(int value)//opacity
 {
@@ -128,21 +118,16 @@ void MainWindow::drawSectors()
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 void MainWindow::on_horizontalSlider_2_valueChanged(int value)
 {
+    AppStorage::shared().numberOfRadius = value;
     auto pair = ManagersLocator::shared().mathManager.centerOfPigmentArea(AppStorage::shared().nevusImage);
-    ui->imageView->drawSectors(pair.first, pair.second, value);
+    ui->imageView->drawSectors(pair.first, pair.second, value, AppStorage::shared().numberOfSectors);
+}
+
+void MainWindow::on_horizontalSlider_3_valueChanged(int value)
+{
+    AppStorage::shared().numberOfSectors = value;
+    auto pair = ManagersLocator::shared().mathManager.centerOfPigmentArea(AppStorage::shared().nevusImage);
+    ui->imageView->drawSectors(pair.first, pair.second, AppStorage::shared().numberOfRadius, value);
 }

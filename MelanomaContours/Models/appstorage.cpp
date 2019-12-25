@@ -3,5 +3,6 @@
 
 AppStorage::AppStorage()
 {
-
+    numberOfRadius = 4;
+    numberOfSectors = 4;
 }
