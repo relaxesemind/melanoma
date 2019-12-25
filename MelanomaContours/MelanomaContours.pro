@@ -47,7 +47,8 @@ SOURCES += \
     Managers/grapher.cpp \
     Views/waitingspinnerwidget.cpp \
     Managers/calculatingprocess.cpp \
-    Views/animatedprogressbar.cpp
+    Views/animatedprogressbar.cpp \
+    Managers/connectedcomponents.cpp
 
 HEADERS += \
     Controllers/mainwindow.h \
@@ -72,7 +73,8 @@ HEADERS += \
     Managers/grapher.h \
     Views/waitingspinnerwidget.h \
     Managers/calculatingprocess.h \
-    Views/animatedprogressbar.h
+    Views/animatedprogressbar.h \
+    Managers/connectedcomponents.h
 
 FORMS += \
     Forms/mainwindow.ui \

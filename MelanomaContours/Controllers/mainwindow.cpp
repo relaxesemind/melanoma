@@ -41,17 +41,22 @@ void MainWindow::on_loadImageAction_triggered()
     //QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");
     if (!fileName.isEmpty())
     {
-        AppStorage::shared().imagePath = fileName;
+        auto& storage = AppStorage::shared();
+        storage.imagePath = fileName;
         QPixmap pixmap;
         pixmap.load(fileName);
         QImage sourceImage = pixmap.toImage();
-        AppStorage::shared().sourceImage = sourceImage;
+        storage.sourceImage = sourceImage;
+        storage.nevusImage = ManagersLocator::shared().mathManager.pigmentArea(sourceImage).first;
+
         ui->imageView->setImage(sourceImage);
     }
 }
 
 void MainWindow::on_pushButton_clicked()
 {
+    auto pair = ManagersLocator::shared().mathManager.centerOfPigmentArea(AppStorage::shared().nevusImage);
+    ui->imageView->drawSectors(pair.first, pair.second);
     runMainProcess();
 }
 
@@ -74,11 +79,10 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::runMainProcess()
 {
-    QImage sourceImage = AppStorage::shared().sourceImage;
-    CalculatingProcess *process = new CalculatingProcess(sourceImage);
+    QImage image = AppStorage::shared().sourceImage;
+    CalculatingProcess *process = new CalculatingProcess(image);
 
-    connect(process, &CalculatingProcess::isRunning, this,[this](bool isRunning)
-    {
+    connect(process, &CalculatingProcess::isRunning, this,[this](bool isRunning){
         if (isRunning)
         {
             spinner = new WaitingSpinnerWidget(ui->imageView, Qt::ApplicationModal, true);
@@ -119,6 +123,10 @@ void MainWindow::runMainProcess()
     threadPool->start(process);
 }
 
+void MainWindow::drawSectors()
+{
+
+}
 
 
 
@@ -131,3 +139,10 @@ void MainWindow::runMainProcess()
 
 
 
+
+
+void MainWindow::on_horizontalSlider_2_valueChanged(int value)
+{
+    auto pair = ManagersLocator::shared().mathManager.centerOfPigmentArea(AppStorage::shared().nevusImage);
+    ui->imageView->drawSectors(pair.first, pair.second, value);
+}

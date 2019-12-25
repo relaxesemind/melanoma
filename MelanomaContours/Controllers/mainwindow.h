@@ -29,11 +29,14 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void on_horizontalSlider_2_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
     QThreadPool *threadPool;
     WaitingSpinnerWidget *spinner;
     void runMainProcess();
+    void drawSectors();
 };
 
 #endif // MAINWINDOW_H

@@ -28,6 +28,7 @@ public:
     void setOpacity(qreal value);
     void setOverlayImage(const QImage &value);
     QImage getOverlayImage() const;
+    void drawSectors(QPoint areaCenter, qreal mainRadius, int numberOfRadius = 4, int numberOfSectors = 1);
 
 protected:
     void wheelEvent(QWheelEvent *event)override;
@@ -52,6 +53,9 @@ private: //property
 
 private: //methods
     QPointF transformCoordinates(QPointF pos) const;
+    QVector<QGraphicsEllipseItem *> circles;
+    void removeCircles();
+    QGraphicsEllipseItem *addCircleToScene(QPoint center, qreal radius);
 };
 
 #endif // IMAGEVIEW_H

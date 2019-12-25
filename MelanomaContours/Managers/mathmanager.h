@@ -6,6 +6,7 @@
 #include <QVector2D>
 #include <QImage>
 #include <QPolygon>
+#include <utility>
 #include "Models/appstorage.h"
 #include "Common/opencv.h"
 
@@ -25,7 +26,10 @@ public:
     cv::Mat imagePreparation(const QImage& sourceImage);
     QImage dummyThreshold(const QImage& src);
     QImage thresholdBradley(const QImage& src, bool invert = false);
-    QImage pigmentArea(const QImage& image);
+    QImage OTSU_thresholdImage(const QImage& src);
+    std::pair<QImage, QPolygon> pigmentArea(const QImage& image); // black background
+    std::pair<QPoint, qreal> centerOfPigmentArea(const QImage& image);
+
 };
 
 #endif // MATHMANAGER_H

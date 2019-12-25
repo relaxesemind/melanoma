@@ -3,8 +3,10 @@
 #include <algorithm>
 #include <QDebug>
 #include <QFloat16>
+#include <limits>
 #include "helper.h"
 #include "Common/consts.h"
+#include "connectedcomponents.h"
 
 void MathManager::rgb2lab(float R, float G, float B, float &l_s, float &a_s, float &b_s)
 {
@@ -210,9 +212,84 @@ QImage MathManager::thresholdBradley(const QImage &src, bool invert)
     return ret_img;
 }
 
-QImage MathManager::pigmentArea(const QImage &image)
+QImage MathManager::OTSU_thresholdImage(const QImage &src)
 {
-    return image;
+    Helper helper;
+    cv::Mat src_mat = helper.QImageToCvMat(src);
+    cv::Mat binar;
+    cv::cvtColor(src_mat, src_mat, cv::COLOR_RGB2GRAY);
+    cv::threshold(src_mat, binar, 0 ,255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+    QImage result(helper.QImageFromMat(binar).convertToFormat(QImage::Format_RGB888));
+    return result;
+}
+
+std::pair<QImage, QPolygon> MathManager::pigmentArea(const QImage &image)
+{
+    Helper helper;
+    cv::Mat src = helper.QImageToCvMat(image);
+    cv::Mat3b bgr_image(src);
+    cv::Mat mask;
+
+    cv::cvtColor(src, src, cv::COLOR_BGR2GRAY);
+    cv::threshold(src, mask, 0 ,255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+    ConnectedComponents cc(mask);
+    cv::Rect roi(src.cols / 3, src.rows / 3, src.cols / 3, src.rows / 3);
+    std::map<int, int> areas = cc.areas(roi);
+    if (areas.size() == 1)
+    areas = cc.areas();
+    int nevus_label = -1;
+    int nevus_area = -1;
+    for (auto label_and_area: areas)
+    {
+         int label = label_and_area.first;
+         int area = label_and_area.second;
+         if (label == 0)
+             continue; //пропуск сегмента фона;
+
+        if (nevus_area < area)
+        {
+            nevus_label = label;
+            nevus_area = area;
+        }
+    }
+
+    assert(nevus_label != -1);
+
+//    cc.drawBorders(bgr_image, 5);
+    QImage result = helper.QImageFromMat(cc.simpleMask(nevus_label)(bgr_image));
+
+    return std::make_pair(result, QPolygon());
+}
+
+std::pair<QPoint, qreal> MathManager::centerOfPigmentArea(const QImage &image)
+{
+    int x_min = std::numeric_limits<int>::max();
+    int x_max = 0;
+    int y_min = std::numeric_limits<int>::max();
+    int y_max = 0;
+
+    for (int i = 0; i < image.height(); ++i)
+        for (int j = 0; j < image.width(); ++j)
+        {
+            QRgb pixel = image.pixel(j, i);
+            if (pixel != 0xFF000000)
+            {
+                x_min = j < x_min ? j : x_min;
+                x_max = j > x_max ? j : x_max;
+                y_min = i < y_min ? i : y_min;
+                y_max = i > y_max ? i : y_max;
+            }
+        }
+
+    int x_mid = x_min + (x_max - x_min) / 2;
+    int y_mid = y_min + (y_max - y_min) / 2;
+    QPoint center(x_mid, y_mid);
+    qreal radius = (x_max - x_min) * 0.5f;
+
+    AppStorage::shared().centerPointArea = center;
+    AppStorage::shared().areaRadius = radius;
+
+    return std::make_pair(center, radius);
 }
 
 

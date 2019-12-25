@@ -3,6 +3,8 @@
 #include "Common/consts.h"
 #include "Models/appstorage.h"
 #include <QtMath>
+#include <QPainter>
+#include <QGraphicsEllipseItem>
 #include "Common/magic.h"
 
 ImageView::ImageView(QWidget *widget) : QGraphicsView(widget)
@@ -65,6 +67,20 @@ QImage ImageView::getOverlayImage() const
     return overlayImage;
 }
 
+void ImageView::drawSectors(QPoint areaCenter, qreal mainRadius, int numberOfRadius, int numberOfSectors)
+{
+    removeCircles();
+    if (numberOfRadius < 1) return;
+
+//    addCircleToScene(areaCenter, mainRadius);
+    qreal maxR = mainRadius;
+    qreal stepR = maxR / numberOfRadius;
+    for (int i = 0; i < numberOfRadius; ++i)
+    {
+        addCircleToScene(areaCenter, stepR * (1 + i));
+    }
+}
+
 void ImageView::setOverlayImage(const QImage &value)
 {
     overlayImage = value;
@@ -89,6 +105,32 @@ void ImageView::setOverlayImage(const QImage &value)
 QPointF ImageView::transformCoordinates(QPointF pos) const
 {
     return mapToScene(pos.x(),pos.y());
+}
+
+void ImageView::removeCircles()
+{
+    for (int i = 0; i < circles.count(); ++i)
+    {
+        scene->removeItem(circles[i]);
+    }
+
+    circles.clear();
+}
+
+QGraphicsEllipseItem *ImageView::addCircleToScene(QPoint center, qreal radius)
+{
+    QPen pen((QColor(Qt::red)));
+    pen.setWidth(3);
+    QPoint topLeft(center.x() - radius, center.y() - radius);
+    QPoint bottomRight(center.x() + radius, center.y() + radius);
+
+    QRectF rect(topLeft, bottomRight);
+    QGraphicsEllipseItem *item = new QGraphicsEllipseItem(rect);
+    item->setPen(pen);
+
+    scene->addItem(item);
+    circles.push_back(item);
+    return item;
 }
 
 

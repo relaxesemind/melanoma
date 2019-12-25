@@ -86,9 +86,49 @@ cv::Mat Helper::QPixmapToCvMat(const QPixmap &inPixmap, bool inCloneImageData)
     return QImageToCvMat( inPixmap.toImage(), inCloneImageData );
 }
 
-QImage Helper::QImageFromMat(const cv::Mat &src)
+QImage Helper::QImageFromMat(const cv::Mat &inMat)
 {
-    return QImage((uchar*) src.data, src.cols, src.rows, src.step1(), QImage::Format_RGB888);
+//    QImage image(src.data, src.cols, src.rows, static_cast<int>(src.step), QImage::Format_RGB888);
+//    return image.rgbSwapped();
+    switch (inMat.type())
+        {
+            // 8-bit, 4 channel
+        case CV_8UC4:
+        {
+            QImage image(inMat.data,
+                inMat.cols, inMat.rows,
+                static_cast<int>(inMat.step),
+                QImage::Format_ARGB32);
+
+            return image;
+        }
+
+        // 8-bit, 3 channel
+        case CV_8UC3:
+        {
+            QImage image(inMat.data,
+                inMat.cols, inMat.rows,
+                static_cast<int>(inMat.step),
+                QImage::Format_RGB888);
+
+            return image.rgbSwapped();
+        }
+
+        // 8-bit, 1 channel
+        case CV_8UC1:
+        {
+            QImage image(inMat.data, inMat.cols, inMat.rows,
+                         static_cast<int>(inMat.step),
+                         QImage::Format_Grayscale8);
+            return image;
+        }
+
+        default:
+            qWarning() << "cvMatToQImage() - cv::Mat image type not handled in switch:" << inMat.type();
+            break;
+        }
+
+        return QImage();
 }
 
 QImage Helper::gaussianBlur(const cv::Mat &mat)

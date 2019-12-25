@@ -1,4 +1,5 @@
 #include "grapher.h"
+#include <QPainter>
 
 Grapher::Grapher()
 {

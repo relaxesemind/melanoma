@@ -27,13 +27,17 @@ class AppStorage : public SingletonClass<AppStorage>
 
 public:
     QString imagePath;
-    QImage sourceImage;
+    QImage sourceImage, nevusImage;
     QVector<S_area> lines;
     QPolygon spotArea;
     qreal averageLenght;
     qreal averageThick;
     QColor averageColor;
     qreal averageAngle;
+
+    qreal areaRadius;
+    QPoint centerPointArea;
+    int numberOfRadius, numberOfSectors;
 };
 
 #endif // APPSTORAGE_H
