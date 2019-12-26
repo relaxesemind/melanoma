@@ -27,6 +27,7 @@ public:
 
     qreal getAngle();
     qreal getLenght();
+    QPoint getCenter();
 
 
 private:

@@ -120,13 +120,16 @@ void MainWindow::drawSectors()
 
 void MainWindow::on_horizontalSlider_2_valueChanged(int value)
 {
+    ui->label_3->setText(QString::number(value));
     AppStorage::shared().numberOfRadius = value;
+
     auto pair = ManagersLocator::shared().mathManager.centerOfPigmentArea(AppStorage::shared().nevusImage);
     ui->imageView->drawSectors(pair.first, pair.second, value, AppStorage::shared().numberOfSectors);
 }
 
 void MainWindow::on_horizontalSlider_3_valueChanged(int value)
 {
+    ui->label_4->setText(QString::number(value));
     AppStorage::shared().numberOfSectors = value;
     auto pair = ManagersLocator::shared().mathManager.centerOfPigmentArea(AppStorage::shared().nevusImage);
     ui->imageView->drawSectors(pair.first, pair.second, AppStorage::shared().numberOfRadius, value);

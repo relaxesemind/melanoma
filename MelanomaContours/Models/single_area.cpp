@@ -31,3 +31,18 @@ qreal S_area::getLenght()
 
     return lenght;
 }
+
+QPoint S_area::getCenter()
+{
+    if (Points.isEmpty())
+    {
+        return QPoint();
+    }
+
+    if (Points.count() < 3)
+    {
+        return Points.first();
+    }
+
+    return Points.at(Points.count() / 2);
+}

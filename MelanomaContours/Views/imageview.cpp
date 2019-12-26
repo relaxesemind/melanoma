@@ -18,9 +18,7 @@ ImageView::ImageView(QWidget *widget) : QGraphicsView(widget)
     overlayItem = nullptr;
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setStyleSheet(QString(
-                          "background-color: #89AFD1;"
-                          ));
+    setStyleSheet(QString("background-color: #89AFD1;"));
 }
 
 QImage ImageView::getImage() const
@@ -69,20 +67,24 @@ QImage ImageView::getOverlayImage() const
 
 void ImageView::drawSectors(QPoint areaCenter, qreal mainRadius, int numberOfRadius, int numberOfSectors)
 {
-    if (numberOfRadius < 1 || numberOfSectors < 1) return;
+    if (numberOfRadius < 1 || numberOfSectors < 2) return;
     removeCircles();
     removeRadiuses();
 
     qreal maxR = mainRadius;
     qreal stepR = maxR / numberOfRadius;
-    qreal stepAngle = M_PI * 2. / numberOfSectors;
+    qreal stepAngle = 2. * M_PI / numberOfSectors;
     for (int i = 0; i < numberOfRadius; ++i)
     {
-        addCircleToScene(areaCenter, stepR * (1 + i));
+        qreal r = stepR * (1 + i);
+        addCircleToScene(areaCenter, r);
+        AppStorage::shared().radiuses.append(r);
     }
     for (int i = 0; i < numberOfSectors; ++i)
     {
-        addRadiusToScene(areaCenter, mainRadius, stepAngle * (1 + i));
+        qreal angle = stepAngle * (1 + i);
+        addRadiusToScene(areaCenter, mainRadius, angle);
+        AppStorage::shared().angles.append(angle);
     }
 }
 
@@ -120,6 +122,7 @@ void ImageView::removeCircles()
     }
 
     circles.clear();
+    AppStorage::shared().radiuses.clear();
 }
 
 void ImageView::removeRadiuses()
@@ -130,20 +133,21 @@ void ImageView::removeRadiuses()
     }
 
     radiuses.clear();
+    AppStorage::shared().angles.clear();
 }
 
 QGraphicsEllipseItem *ImageView::addCircleToScene(QPoint center, qreal radius)
 {
     QPen pen((QColor(Qt::red)));
-    pen.setWidth(3);
+    pen.setWidth(2);
     QPoint topLeft(center.x() - radius, center.y() - radius);
     QPoint bottomRight(center.x() + radius, center.y() + radius);
 
     QRectF rect(topLeft, bottomRight);
-    QGraphicsEllipseItem *item = new QGraphicsEllipseItem(rect);
+    QGraphicsEllipseItem *item = new QGraphicsEllipseItem(rect, this->item);
     item->setPen(pen);
 
-    scene->addItem(item);
+//    scene->addItem(item);
     circles.push_back(item);
     return item;
 }
@@ -153,12 +157,12 @@ QGraphicsLineItem *ImageView::addRadiusToScene(QPoint center, qreal radius, qrea
     qreal x2 = radius * std::cos(angle);
     qreal y2 = radius * std::sin(angle);
 
-    QGraphicsLineItem *item = new QGraphicsLineItem(center.x(), center.y(), x2 + center.x(), y2 + center.y());
+    QGraphicsLineItem *item = new QGraphicsLineItem(center.x(), center.y(), x2 + center.x(), y2 + center.y(), this->item);
     QPen pen((QColor(Qt::red)));
-    pen.setWidth(3);
+    pen.setWidth(2);
 
     item->setPen(pen);
-    scene->addItem(item);
+//    scene->addItem(item);
     radiuses.push_back(item);
     return item;
 }
@@ -193,8 +197,15 @@ void ImageView::mouseMoveEvent(QMouseEvent *event)
 {
     if (pressed)
     {
-        item->setPos(event->pos() - QPoint(start_x, start_y));
-        overlayItem->setPos(event->pos() - QPoint(start_x, start_y));
+        QPointF position = event->pos() - QPoint(start_x, start_y);
+        if (item)
+        {
+           item->setPos(position);
+        }
+        if (overlayItem)
+        {
+           overlayItem->setPos(position);
+        }
     }
 }
 

@@ -38,6 +38,9 @@ public:
     qreal areaRadius;
     QPoint centerPointArea;
     int numberOfRadius, numberOfSectors;
+
+    QVector<qreal> radiuses; // r0 = 0
+    QVector<qreal> angles; //
 };
 
 #endif // APPSTORAGE_H
