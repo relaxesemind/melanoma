@@ -32,7 +32,7 @@ qreal S_area::getLenght()
     return lenght;
 }
 
-QPoint S_area::getCenter()
+QPoint S_area::getCenter() const
 {
     if (Points.isEmpty())
     {

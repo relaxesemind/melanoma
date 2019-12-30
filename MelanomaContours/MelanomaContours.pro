@@ -49,7 +49,8 @@ SOURCES += \
     Managers/calculatingprocess.cpp \
     Views/animatedprogressbar.cpp \
     Managers/connectedcomponents.cpp \
-    Models/sector.cpp
+    Models/sector.cpp \
+    Managers/sectorsprocess.cpp
 
 HEADERS += \
     Controllers/mainwindow.h \
@@ -76,7 +77,8 @@ HEADERS += \
     Managers/calculatingprocess.h \
     Views/animatedprogressbar.h \
     Managers/connectedcomponents.h \
-    Models/sector.h
+    Models/sector.h \
+    Managers/sectorsprocess.h
 
 FORMS += \
     Forms/mainwindow.ui \

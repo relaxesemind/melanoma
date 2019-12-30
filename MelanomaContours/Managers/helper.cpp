@@ -5,6 +5,17 @@
 #include <algorithm>
 #include "Models/single_area.h"
 #include "Models/appstorage.h"
+#include "Managers/sectorsprocess.h"
+
+Helper::Helper(QObject *parent) : QObject(parent)
+{
+    threadPool = new QThreadPool();
+}
+
+Helper::~Helper()
+{
+    delete threadPool;
+}
 
 cv::Mat Helper::QImageToCvMat(const QImage &inImage, bool inCloneImageData)
 {
@@ -195,56 +206,27 @@ void Helper::findLines(const QImage &binarImage)
         }
     }
 }
-
-QVector<QPointF> Helper::preparePointsForGraph(int type, int factor)
+void Helper::preparePointsForGraph(int type, int factor)
 {
-    QVector<QPointF> points;
     auto& storage = AppStorage::shared();
 
     if (storage.lines.isEmpty() or factor == 0)
     {
-        return points;
+        return;
     }
 
-    qreal averageValue = 0;
+    SectorsProcess *process = new SectorsProcess();
+    QObject::connect(process, &SectorsProcess::sectorsEmitted, this, [&storage, this](){
+        auto& sectors = storage.sectors;
+        QVector<QPointF> points;
+        std::for_each(sectors.begin(), sectors.end(),[&points](const Sector& sector){
+            points.append(QPointF(sector.id, sector.linesIds.count()));
+        });
 
-    switch (type)
-    {
-    case 0: averageValue = storage.averageLenght; break;
-    case 1: averageValue = storage.averageThick; break;
-    case 2: averageValue = storage.averageColor.rgb(); break;
-    case 3: averageValue = storage.averageAngle; break;
-    default:
-        break;
-    }
-
-    int count = 0;
-
-    std::for_each(storage.lines.begin(), storage.lines.end(),[&](S_area& line)
-    {
-        if (++count % factor)
-        {
-            return ;
-        }
-
-        qreal value = 0;
-        int column = 0;
-        QPointF point;
-        switch (type)
-        {
-        case 0: value = line.getLenght(); break;
-        case 1: value = line.thickness; break;
-        case 2: value = line.color.rgb(); break;
-        case 3: value = line.getAngle(); break;
-        default:
-            break;
-        }
-
-        qreal delta = value - averageValue;
-        points.append(QPointF(line.id, delta));
+        emit this->pointsEmitted(points);
     });
 
-    return points;
+    threadPool->start(process);
 }
 
 void Helper::fill(const QImage &img, std::vector<std::vector<qint64> > &labels, qint32 _x, qint32 _y, qint64 L)

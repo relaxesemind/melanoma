@@ -8,6 +8,7 @@
 struct Sector
 {
     explicit Sector(int id);
+    Sector() = default;
 
     int id;
     QVector<int> linesIds;

@@ -12,6 +12,7 @@
 #include <QPolygon>
 #include <QImage>
 #include "Models/single_area.h"
+#include "Models/sector.h"
 
 
 enum ColorModel
@@ -41,6 +42,8 @@ public:
 
     QVector<qreal> radiuses; // r0 = 0
     QVector<qreal> angles; //
+
+    QVector<Sector> sectors;
 };
 
 #endif // APPSTORAGE_H

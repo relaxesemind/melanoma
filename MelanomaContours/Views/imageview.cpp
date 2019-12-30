@@ -139,7 +139,7 @@ void ImageView::removeRadiuses()
 QGraphicsEllipseItem *ImageView::addCircleToScene(QPoint center, qreal radius)
 {
     QPen pen((QColor(Qt::red)));
-    pen.setWidth(2);
+    pen.setWidth(1);
     QPoint topLeft(center.x() - radius, center.y() - radius);
     QPoint bottomRight(center.x() + radius, center.y() + radius);
 
@@ -159,7 +159,7 @@ QGraphicsLineItem *ImageView::addRadiusToScene(QPoint center, qreal radius, qrea
 
     QGraphicsLineItem *item = new QGraphicsLineItem(center.x(), center.y(), x2 + center.x(), y2 + center.y(), this->item);
     QPen pen((QColor(Qt::red)));
-    pen.setWidth(2);
+    pen.setWidth(1);
 
     item->setPen(pen);
 //    scene->addItem(item);
@@ -184,7 +184,7 @@ void ImageView::wheelEvent(QWheelEvent *event)
      }
      else
      {
-         scale(1/Global::zoomMul,1/Global::zoomMul);
+         scale(1 / Global::zoomMul,1 / Global::zoomMul);
          currentScale /= Global::zoomMul;
      }
 }

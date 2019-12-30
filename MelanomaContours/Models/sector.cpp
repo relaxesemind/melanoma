@@ -1,7 +1,8 @@
 #include "sector.h"
 #include "Models/appstorage.h"
-
+#include <limits>
 #include <cmath>
+#include <QDebug>
 
 Sector::Sector(int id) : id(id)
 { 
@@ -19,33 +20,45 @@ bool Sector::isContainsPoint(QPoint point)
     int j = idx.second;
     auto& R = AppStorage::shared().radiuses;
     auto& A = AppStorage::shared().angles;
+
     bool cond1 = false;
+    qreal R2 = std::numeric_limits<qreal>::max();
+    qreal R1 = 0;
 
-    if (R.count() == 1 || i == 0)
+//    qDebug() << "i = " << i << " R.Count = " << R.count() << "j = " << j << " A.Count = " << A.count();
+
+    if (R.count() == 1)
     {
-        cond1 = r <= R.first();
+        R2 = R.first();
     }
-    else if (i > R.count() - 1)
+    else if (i + 1 >= R.count() - 1)
     {
-        cond1 = false;
+        return false;
     }
     else
     {
-        cond1 = R[i] <= r <= R[i + 1];
+        R1 = R[i];
+        R2 = R[i + 1];
     }
 
-    bool cond2 = false;
+    cond1 = (R1 <= r) && (r <= R2);
 
-    if (j >= A.count() - 1)
-    {
-        cond2 = A[j] <= fi <= A[0] - A[j];
-    }
-    else
-    {
-        cond2 = A[j] <= fi <= A[j + 1] - A[j];
-    }
+//    bool cond2 = false;
+//    qreal A1 = 0;
+//    qreal A2 = M_PI;
 
-    return cond1 && cond2;
+//    if (j + 1 > A.count() - 1)
+//    {
+//        cond2 = (A[j] <= fi) && (fi <= A[0] - A[j]);
+//    }
+//    else
+//    {
+//        cond2 = (A[j] <= fi) && (fi <= A[j + 1] - A[j]);
+//    }
+
+
+
+    return cond1 ;//&& cond2;
 }
 
 std::pair<int, int> Sector::getRadSec()

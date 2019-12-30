@@ -8,22 +8,30 @@
 #include <QPixmap>
 #include <vector>
 #include <QVector>
+#include <QThreadPool>
+#include <QObject>
 
 
-class Helper
+class Helper : public QObject
 {
+    Q_OBJECT
 public:
-    Helper() = default;
+    Helper(QObject *parent = nullptr);
+    ~Helper();
 
     cv::Mat QImageToCvMat( const QImage &inImage, bool inCloneImageData = true );
     cv::Mat QPixmapToCvMat( const QPixmap &inPixmap, bool inCloneImageData = true );
     QImage  QImageFromMat(const cv::Mat& mat);
     QImage  gaussianBlur(const cv::Mat& mat);
     void findLines(const QImage& binarImage);
-    QVector<QPointF> preparePointsForGraph(int type, int factor = 3);
+    void preparePointsForGraph(int type, int factor = 3);
+
+signals:
+    void pointsEmitted(QVector<QPointF>);
 
 private:
     void fill(const QImage& img, std::vector<std::vector<qint64>>& labels , qint32 _x, qint32 _y, qint64 L);
+    QThreadPool *threadPool;
 
 };
 
