@@ -16,6 +16,7 @@ struct Sector
     qreal averageLength();
     qreal averageWidth();
     QColor averageColor();
+    qreal averageAngle();
 
     std::pair<int, int> getRadSec(); // radius index, alpha index
 };

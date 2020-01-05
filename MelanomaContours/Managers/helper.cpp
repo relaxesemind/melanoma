@@ -164,15 +164,6 @@ void Helper::findLines(const QImage &binarImage)
             }
         }
 
-//    for (int y = 0; y < _h; ++y)
-//    {
-//        for (int x = 0; x < _w; ++x)
-//        {
-//            std::cout << Labels[y][x] << " ";
-//        }
-//        std::cout << std::endl;
-//    }
-
     const quint64 size = --L; // size == num of objects
     QVector<S_area> V(size);
 
@@ -194,7 +185,7 @@ void Helper::findLines(const QImage &binarImage)
           }
       }
     }
-//     qDebug() << V.size();
+
     int index = 0;
 
     for (int i = 0; i < V.size(); ++i)
@@ -243,7 +234,12 @@ void Helper::preparePointsForGraph(int type, int factor)
                 qreal distance = std::sqrt(dR * dR + dG * dG + dB * dB);
                 points.append(QPointF(sector.id, distance));
             } break;
-
+            case 3:
+            {
+                qreal angle = sector.averageAngle();
+                qreal globalen = storage.averageAngle;
+                points.append(QPointF(sector.id, angle - globalen));
+            } break;
 
             default:
                 break;

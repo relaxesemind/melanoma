@@ -159,6 +159,31 @@ QColor Sector::averageColor()
     return QColor::fromRgbF(r, g ,b);
 }
 
+qreal Sector::averageAngle()
+{
+    if (linesIds.count() == 0)
+    {
+        return AppStorage::shared().averageAngle;
+    }
+    auto& lines = AppStorage::shared().lines;
+    qreal result = 0;
+
+    for (int i = 0; i < linesIds.count(); ++i)
+    {
+        if (linesIds[i] >= lines.count() - 1)
+        {
+            continue;
+        }
+
+        result += lines[linesIds[i]].getAngle();
+    }
+
+    result /= linesIds.count();
+
+    return result;
+
+}
+
 std::pair<int, int> Sector::getRadSec()
 {
     const int M = AppStorage::shared().numberOfSectors;
