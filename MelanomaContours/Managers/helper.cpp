@@ -216,11 +216,21 @@ void Helper::preparePointsForGraph(int type, int factor)
     }
 
     SectorsProcess *process = new SectorsProcess();
-    QObject::connect(process, &SectorsProcess::sectorsEmitted, this, [&storage, this](){
+    QObject::connect(process, &SectorsProcess::sectorsEmitted, this, [&storage, this, type](){
         auto& sectors = storage.sectors;
         QVector<QPointF> points;
-        std::for_each(sectors.begin(), sectors.end(),[&points](const Sector& sector){
-            points.append(QPointF(sector.id, sector.linesIds.count()));
+        std::for_each(sectors.begin(), sectors.end(),[&storage, &points, type](Sector& sector){
+            switch (type) {
+            case 0:
+            {
+               qreal len = sector.averageLength();
+               qreal globalen = storage.averageLenght;
+               points.append(QPointF(sector.id, len - globalen));
+            } break;
+
+            default:
+                break;
+            }
         });
 
         emit this->pointsEmitted(points);

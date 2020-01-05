@@ -1,6 +1,7 @@
 #include "sectorsprocess.h"
 #include "Models/appstorage.h"
 #include "Models/sector.h"
+#include <QDebug>
 
 SectorsProcess::SectorsProcess(QObject *parent) : QObject(parent)
 {
@@ -30,6 +31,10 @@ void SectorsProcess::run()
                 sector.linesIds.append(line.id);
             }
         });
+
+        auto pair = sector.getRadSec();
+        qDebug() << "(" << pair.first << ", " <<
+                    pair.second << ")" << sector.linesIds.count();
     });
 
     emit sectorsEmitted();
