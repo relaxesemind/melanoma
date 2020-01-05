@@ -227,6 +227,23 @@ void Helper::preparePointsForGraph(int type, int factor)
                qreal globalen = storage.averageLenght;
                points.append(QPointF(sector.id, len - globalen));
             } break;
+            case 1:
+            {
+                qreal width = sector.averageWidth();
+                qreal globalen = storage.averageThick;
+                points.append(QPointF(sector.id, width - globalen));
+            } break;
+            case 2:
+            {
+                QRgb color = sector.averageColor().rgb();
+                QRgb globalen = storage.averageColor.rgb();
+                qreal dR = qRed(color) - qRed(globalen);
+                qreal dG = qGreen(color) - qGreen(globalen);
+                qreal dB = qBlue(color) - qBlue(globalen);
+                qreal distance = std::sqrt(dR * dR + dG * dG + dB * dB);
+                points.append(QPointF(sector.id, distance));
+            } break;
+
 
             default:
                 break;

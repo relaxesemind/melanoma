@@ -14,6 +14,8 @@ struct Sector
     QVector<int> linesIds;
     bool isContainsPoint(QPoint point);
     qreal averageLength();
+    qreal averageWidth();
+    QColor averageColor();
 
     std::pair<int, int> getRadSec(); // radius index, alpha index
 };

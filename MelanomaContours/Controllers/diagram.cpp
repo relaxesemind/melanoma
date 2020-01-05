@@ -40,16 +40,18 @@ void Diagram::updateAverageLabels()
 
 void Diagram::on_comboBox_currentIndexChanged(int index)
 {
-    Grapher::shared().clearView();
-//    int factor = 1;
-//    while (AppStorage::shared().lines.size() / factor > 300)
-//    {
-//        ++factor;
-//    }
-
     auto& helper = ManagersLocator::shared().helper;
-    connect(&helper, &Helper::pointsEmitted, this, [&](const QVector<QPointF>& points){
-        Grapher::shared().addGraph(points,"Дельта",QColor(Qt::darkBlue));
+    connect(&helper, &Helper::pointsEmitted, this, [&](const QVector<QPointF>& points)
+    {
+        auto& grapher = Grapher::shared();
+        grapher.clearView();
+        QVector<QPointF> zeros;
+        for (int i = 0; i < points.count(); ++i)
+        {
+            zeros.append(QPointF(points[i].x(), 0));
+        }
+        grapher.addGraph(zeros,"Ноль", QColor(Qt::red));
+        grapher.addGraph(points,"Дельта",QColor(Qt::darkBlue));
     });
 
     helper.preparePointsForGraph(index);

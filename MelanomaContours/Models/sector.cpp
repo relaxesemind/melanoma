@@ -104,6 +104,61 @@ qreal Sector::averageLength()
    return result;
 }
 
+qreal Sector::averageWidth()
+{
+    if (linesIds.count() == 0)
+    {
+        return AppStorage::shared().averageThick;
+    }
+    auto& lines = AppStorage::shared().lines;
+    qreal result = 0;
+
+    for (int i = 0; i < linesIds.count(); ++i)
+    {
+        if (linesIds[i] >= lines.count() - 1)
+        {
+            continue;
+        }
+
+        result += lines[linesIds[i]].thickness;
+    }
+
+    result /= linesIds.count();
+
+    return result;
+}
+
+QColor Sector::averageColor()
+{
+    if (linesIds.count() == 0)
+    {
+        return AppStorage::shared().averageColor;
+    }
+    auto& lines = AppStorage::shared().lines;
+    float r = 0, g = 0, b = 0;
+    float scale = 0xFF * lines.count();
+
+    for (int i = 0; i < linesIds.count(); ++i)
+    {
+        if (linesIds[i] >= lines.count() - 1)
+        {
+            continue;
+        }
+
+        QRgb rgb = lines[linesIds[i]].color.rgb();
+
+        r += qRed(rgb);
+        g += qGreen(rgb);
+        b += qBlue(rgb);
+    }
+
+    r /= scale;
+    g /= scale;
+    b /= scale;
+
+    return QColor::fromRgbF(r, g ,b);
+}
+
 std::pair<int, int> Sector::getRadSec()
 {
     const int M = AppStorage::shared().numberOfSectors;

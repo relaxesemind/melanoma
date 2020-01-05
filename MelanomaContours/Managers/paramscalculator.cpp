@@ -17,7 +17,7 @@ void ParamsCalculator::calculateAllParams()
         return;
     }
 
-    qreal averageLenght = 0;;
+    qreal averageLenght = 0;
     qreal averageThick = 0;
     QColor averageColor;
     qreal averageAngle = 0;
@@ -32,7 +32,7 @@ void ParamsCalculator::calculateAllParams()
         float r = 0.0f, g = 0.0f, b = 0.0f;
         float scale = 0xFF * line.Points.count();
         std::for_each(line.Points.begin(), line.Points.end(),[&sourceImage, &r, &g, &b](QPoint point){
-            QRgb pixel = sourceImage.pixel(point.x(), point.y());
+            QRgb pixel = sourceImage.pixel(point);
             r += qRed(pixel);
             g += qGreen(pixel);
             b += qBlue(pixel);
@@ -41,7 +41,7 @@ void ParamsCalculator::calculateAllParams()
        line.color = QColor::fromRgbF(r / scale, g / scale, b / scale);
        averageAngle += line.getAngle();
        averageLenght += line.getLenght();
-       line.thickness = line.getLenght() * 0.12 * (1 + rand() % 2);
+       line.thickness = line.getLenght() * 0.10 * (1 + rand() % 4);
        averageThick += line.thickness;
        QRgb asd = line.color.rgb();
        r1 += qRed(asd);
