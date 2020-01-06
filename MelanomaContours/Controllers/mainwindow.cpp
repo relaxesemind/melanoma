@@ -4,6 +4,7 @@
 #include "Managers/managerslocator.h"
 #include "Controllers/diagram.h"
 #include "Managers/calculatingprocess.h"
+#include "Managers/binarizationtestprocess.h"
 #include "Common/consts.h"
 #include <QFileDialog>
 #include <QDebug>
@@ -18,6 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     spinner = nullptr;
     ui->progressBar->setStyleSheet(Global::progressBarStyle);
+    ui->lineEdit->setText(QString::number(AppStorage::shared().t,'f', 2));
+    ui->lineEdit_2->setText(QString::number(AppStorage::shared().S));
+    ui->horizontalSlider_4->setValue(AppStorage::shared().t * 100);
+    ui->horizontalSlider_5->setValue(AppStorage::shared().S);
 }
 
 MainWindow::~MainWindow()
@@ -29,7 +34,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_loadImageAction_triggered()
 {
     QString fileName = "C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
-    //QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");
+//    QString fileName = QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");
     if (!fileName.isEmpty())
     {
         auto& storage = AppStorage::shared();
@@ -47,7 +52,7 @@ void MainWindow::on_loadImageAction_triggered()
 void MainWindow::on_pushButton_clicked()
 {
     auto pair = ManagersLocator::shared().mathManager.centerOfPigmentArea(AppStorage::shared().nevusImage);
-    ui->imageView->drawSectors(pair.first, pair.second);
+    ui->imageView->drawSectors(pair.first, pair.second, AppStorage::shared().numberOfRadius, AppStorage::shared().numberOfSectors);
     runMainProcess();
 }
 
@@ -134,3 +139,55 @@ void MainWindow::on_horizontalSlider_3_valueChanged(int value)
     auto pair = ManagersLocator::shared().mathManager.centerOfPigmentArea(AppStorage::shared().nevusImage);
     ui->imageView->drawSectors(pair.first, pair.second, AppStorage::shared().numberOfRadius, value);
 }
+
+void MainWindow::on_horizontalSlider_4_valueChanged(int value)
+{
+    float fValue = static_cast<float>(value) / 100.f;
+    AppStorage::shared().t = fValue;
+    ui->lineEdit->setText(QString::number(fValue,'f', 2));
+}
+
+void MainWindow::on_horizontalSlider_5_valueChanged(int value)
+{
+    AppStorage::shared().S = value;
+    ui->lineEdit_2->setText(QString::number(value));
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    BinarizationTestProcess *process = new BinarizationTestProcess(AppStorage::shared().sourceImage);
+
+    connect(process, &BinarizationTestProcess::isRunning, this,[this](bool isRunning){
+        if (isRunning)
+        {
+            spinner = new WaitingSpinnerWidget(ui->imageView, Qt::ApplicationModal, true);
+            spinner->setRoundness(70.0);
+            spinner->setColor(QColor(Qt::darkBlue));
+            spinner->setMinimumTrailOpacity(15.0);
+            spinner->setTrailFadePercentage(70.0);
+            spinner->setNumberOfLines(12);
+            spinner->setLineLength(12);
+            spinner->setLineWidth(4);
+            spinner->setInnerRadius(10);
+            spinner->setRevolutionsPerSecond(1);
+            spinner->start();
+        }
+        else if (spinner != nullptr)
+        {
+            spinner->stop();
+            delete spinner;
+            spinner = nullptr;
+        }
+    });
+
+    connect(process, &BinarizationTestProcess::isDone, this, [this](bool isDone, QImage image){
+        if (isDone)
+        {
+           this->ui->imageView->setOverlayImage(image);
+        }
+    });
+
+    threadPool->start(process);
+}
+
+

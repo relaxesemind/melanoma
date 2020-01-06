@@ -274,8 +274,8 @@ void Helper::fill(const QImage &img, std::vector<std::vector<qint64> > &labels, 
     while (!depth.empty())
     {
         t = depth.pop();
-        qint32 x = t.rx();
-        qint32 y = t.ry();
+        qint32 x = t.x();
+        qint32 y = t.y();
         labels[y][x] = L; // filling.
 
         check({x + 1, y});

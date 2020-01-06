@@ -14,6 +14,7 @@ void CalculatingProcess::run()
 
     if (sourceImage.isNull())
     {
+        emit isDone(false, QImage());
         return;
     }
 

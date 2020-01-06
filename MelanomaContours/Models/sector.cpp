@@ -81,9 +81,10 @@ bool Sector::isContainsPoint(QPoint point)
 
 qreal Sector::averageLength()
 {
+    qreal avg = AppStorage::shared().averageLenght;
     if (linesIds.count() == 0)
     {
-        return AppStorage::shared().averageLenght;
+        return avg;
     }
 
    auto& lines = AppStorage::shared().lines;
@@ -100,6 +101,12 @@ qreal Sector::averageLength()
    }
 
    result /= linesIds.count();
+
+//   if (result > avg * 1.4)
+//   {
+//       float div = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+//       result = avg * 0.9 * div;
+//   }
 
    return result;
 }

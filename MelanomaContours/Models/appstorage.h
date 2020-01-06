@@ -44,6 +44,9 @@ public:
     QVector<qreal> angles; //
 
     QVector<Sector> sectors;
+
+    float t;
+    int S;
 };
 
 #endif // APPSTORAGE_H

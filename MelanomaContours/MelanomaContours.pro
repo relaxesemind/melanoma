@@ -50,7 +50,8 @@ SOURCES += \
     Views/animatedprogressbar.cpp \
     Managers/connectedcomponents.cpp \
     Models/sector.cpp \
-    Managers/sectorsprocess.cpp
+    Managers/sectorsprocess.cpp \
+    Managers/binarizationtestprocess.cpp
 
 HEADERS += \
     Controllers/mainwindow.h \
@@ -78,7 +79,8 @@ HEADERS += \
     Views/animatedprogressbar.h \
     Managers/connectedcomponents.h \
     Models/sector.h \
-    Managers/sectorsprocess.h
+    Managers/sectorsprocess.h \
+    Managers/binarizationtestprocess.h
 
 FORMS += \
     Forms/mainwindow.ui \

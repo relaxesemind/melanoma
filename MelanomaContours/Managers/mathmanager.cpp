@@ -157,8 +157,8 @@ QImage MathManager::thresholdBradley(const QImage &src, bool invert)
     const qint32 w = src.width();
     const qint32 h = src.height();
     QImage ret_img(w,h,QImage::Format_RGB32);
-    const qint32 S = w / Global::bredleyRotSfactor;
-    const float t = Global::breadleyRot_f_factor;
+    const qint32 S = w / AppStorage::shared().S;
+    const float t = AppStorage::shared().t;
     qint32 s2 = S / 2;
     const int blackPixel = invert ? 0xFFFFFF : 0x0;
     const int whitePixel = invert ? 0x0 : 0xFFFFFF;
