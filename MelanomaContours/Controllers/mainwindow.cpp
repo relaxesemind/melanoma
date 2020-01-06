@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     spinner = nullptr;
+    progressValue = 0;
     ui->progressBar->setStyleSheet(Global::progressBarStyle);
     ui->lineEdit->setText(QString::number(AppStorage::shared().t,'f', 2));
     ui->lineEdit_2->setText(QString::number(AppStorage::shared().S));
@@ -77,6 +78,12 @@ void MainWindow::runMainProcess()
     QImage image = AppStorage::shared().sourceImage;
     CalculatingProcess *process = new CalculatingProcess(image);
 
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [this](){
+        this->ui->progressBar->setValue((++progressValue) % 100);
+    });
+
+
     connect(process, &CalculatingProcess::isRunning, this,[this](bool isRunning){
         if (isRunning)
         {
@@ -101,7 +108,13 @@ void MainWindow::runMainProcess()
         }
     });
 
-    connect(process, &CalculatingProcess::isDone, this, [this](bool isDone, QImage image){
+    connect(process, &CalculatingProcess::isDone, this, [this, timer](bool isDone, QImage image){
+        timer->stop();
+        delete timer;
+
+        this->ui->progressBar->setValue(0);
+        progressValue = 0;
+
         if (!isDone)
         {
             return ;
@@ -111,11 +124,13 @@ void MainWindow::runMainProcess()
         ui->pushButton->setEnabled(true);
     });
 
-    connect(process, &CalculatingProcess::progress, this, [this](int percent){
-        ui->progressBar->setValue(percent);
-    });
+//    connect(process, &CalculatingProcess::progress, this, [this](int percent){
+//        ui->progressBar->setValue(percent);
+//    });
+
 
     threadPool->start(process);
+    timer->start(25);
 }
 
 void MainWindow::drawSectors()
@@ -157,6 +172,11 @@ void MainWindow::on_pushButton_3_clicked()
 {
     BinarizationTestProcess *process = new BinarizationTestProcess(AppStorage::shared().sourceImage);
 
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [this](){
+        this->ui->progressBar->setValue((++progressValue) % 100);
+    });
+
     connect(process, &BinarizationTestProcess::isRunning, this,[this](bool isRunning){
         if (isRunning)
         {
@@ -180,7 +200,12 @@ void MainWindow::on_pushButton_3_clicked()
         }
     });
 
-    connect(process, &BinarizationTestProcess::isDone, this, [this](bool isDone, QImage image){
+    connect(process, &BinarizationTestProcess::isDone, this, [this, timer](bool isDone, QImage image){
+        timer->stop();
+        delete timer;
+
+        this->ui->progressBar->setValue(0);
+         progressValue = 0;
         if (isDone)
         {
            this->ui->imageView->setOverlayImage(image);
@@ -188,6 +213,7 @@ void MainWindow::on_pushButton_3_clicked()
     });
 
     threadPool->start(process);
+    timer->start(25);
 }
 
 

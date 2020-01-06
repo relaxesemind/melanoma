@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QThreadPool>
+#include <QTimer>
+
 #include "Common/opencv.h"
 #include "Views/waitingspinnerwidget.h"
 
@@ -45,6 +47,7 @@ private:
     WaitingSpinnerWidget *spinner;
     void runMainProcess();
     void drawSectors();
+    int progressValue;
 };
 
 #endif // MAINWINDOW_H
