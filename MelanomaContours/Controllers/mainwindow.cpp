@@ -34,11 +34,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_loadImageAction_triggered()
 {
-    QString fileName = "C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
-//    QString fileName = QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");
+//    QString fileName = "C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
+    QString fileName = QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");
+
     if (!fileName.isEmpty())
     {
         auto& storage = AppStorage::shared();
+        storage.clearStorage();
         storage.imagePath = fileName;
         QPixmap pixmap;
         pixmap.load(fileName);
@@ -123,11 +125,6 @@ void MainWindow::runMainProcess()
         ui->pushButton_2->setEnabled(true);
         ui->pushButton->setEnabled(true);
     });
-
-//    connect(process, &CalculatingProcess::progress, this, [this](int percent){
-//        ui->progressBar->setValue(percent);
-//    });
-
 
     threadPool->start(process);
     timer->start(25);

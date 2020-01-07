@@ -197,6 +197,20 @@ void Helper::findLines(const QImage &binarImage)
         }
     }
 }
+
+qreal Helper::distance(const QColor &a, const QColor &b)
+{
+    qreal aR = a.redF(), bR = b.redF();
+    qreal aG = a.greenF(), bG = b.greenF();
+    qreal aB = a.blueF(), bB = b.blueF();
+
+    qreal dr = aR > bR ? aR - bR : bR - aR;
+    qreal dg = aG > bG ? aG - bG : bG - aG;
+    qreal db = aB > bB ? aB - bB : bB - aB;
+
+    return 0xFF * std::sqrt(std::pow(dr, 2) + std::pow(dg, 2) + std::pow(db, 2));
+}
+
 void Helper::preparePointsForGraph(int type, int factor)
 {
     auto& storage = AppStorage::shared();
@@ -210,7 +224,7 @@ void Helper::preparePointsForGraph(int type, int factor)
     QObject::connect(process, &SectorsProcess::sectorsEmitted, this, [&storage, this, type](){
         auto& sectors = storage.sectors;
         QVector<QPointF> points;
-        std::for_each(sectors.begin(), sectors.end(),[&storage, &points, type](Sector& sector){
+        std::for_each(sectors.begin(), sectors.end(),[&storage, &points, type, this](Sector& sector){
             switch (type) {
             case 0:
             {
@@ -226,12 +240,9 @@ void Helper::preparePointsForGraph(int type, int factor)
             } break;
             case 2:
             {
-                QRgb color = sector.averageColor().rgb();
-                QRgb globalen = storage.averageColor.rgb();
-                qreal dR = qRed(color) - qRed(globalen);
-                qreal dG = qGreen(color) - qGreen(globalen);
-                qreal dB = qBlue(color) - qBlue(globalen);
-                qreal distance = std::sqrt(dR * dR + dG * dG + dB * dB);
+                QColor color = sector.averageColor();
+                QColor globalen = storage.averageColor;
+                qreal distance = this->distance(color, globalen);
                 points.append(QPointF(sector.id, distance));
             } break;
             case 3:

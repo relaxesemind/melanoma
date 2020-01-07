@@ -9,3 +9,21 @@ AppStorage::AppStorage()
     t = Global::breadleyRot_t_factor;
     S = Global::bredleyRotSfactor;
 }
+
+void AppStorage::clearStorage()
+{
+    imagePath.clear();
+    sourceImage = QImage();
+    nevusImage = QImage();
+    lines.clear();
+    spotArea = QPolygon();
+    averageAngle = 0;
+    averageColor = QColor();
+    averageLenght = 0;
+    averageThick = 0;
+    areaRadius = 0;
+    centerPointArea = QPoint();
+    radiuses.clear();
+    angles.clear();
+    sectors.clear();
+}

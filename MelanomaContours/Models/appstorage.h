@@ -27,6 +27,8 @@ class AppStorage : public SingletonClass<AppStorage>
     AppStorage();
 
 public:
+    void clearStorage();
+
     QString imagePath;
     QImage sourceImage, nevusImage;
     QVector<S_area> lines;

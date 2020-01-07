@@ -92,7 +92,7 @@ qreal Sector::averageLength()
 
    for (int i = 0; i < linesIds.count(); ++i)
    {
-       if (linesIds[i] >= lines.count() - 1)
+       if (linesIds[i] > lines.count() - 1)
        {
            continue;
        }
@@ -122,7 +122,7 @@ qreal Sector::averageWidth()
 
     for (int i = 0; i < linesIds.count(); ++i)
     {
-        if (linesIds[i] >= lines.count() - 1)
+        if (linesIds[i] > lines.count() - 1)
         {
             continue;
         }
@@ -143,20 +143,20 @@ QColor Sector::averageColor()
     }
     auto& lines = AppStorage::shared().lines;
     float r = 0, g = 0, b = 0;
-    float scale = 0xFF * lines.count();
+    float scale = linesIds.count();
 
     for (int i = 0; i < linesIds.count(); ++i)
     {
-        if (linesIds[i] >= lines.count() - 1)
+        if (linesIds[i] > lines.count() - 1)
         {
             continue;
         }
 
-        QRgb rgb = lines[linesIds[i]].color.rgb();
+        QColor color = lines[linesIds[i]].color;
 
-        r += qRed(rgb);
-        g += qGreen(rgb);
-        b += qBlue(rgb);
+        r += color.redF(); //qRed(rgb);
+        g += color.greenF(); //qGreen(rgb);
+        b += color.blueF(); //qBlue(rgb);
     }
 
     r /= scale;
@@ -177,7 +177,7 @@ qreal Sector::averageAngle()
 
     for (int i = 0; i < linesIds.count(); ++i)
     {
-        if (linesIds[i] >= lines.count() - 1)
+        if (linesIds[i] > lines.count() - 1)
         {
             continue;
         }

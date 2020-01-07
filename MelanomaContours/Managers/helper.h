@@ -32,6 +32,7 @@ signals:
 private:
     void fill(const QImage& img, std::vector<std::vector<qint64>>& labels , qint32 _x, qint32 _y, qint64 L);
     QThreadPool *threadPool;
+    qreal distance(const QColor& a, const QColor& b);
 
 };
 
