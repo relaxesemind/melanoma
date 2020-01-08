@@ -4,6 +4,7 @@
 #include "Managers/grapher.h"
 #include "Managers/managerslocator.h"
 #include <QString>
+#include <QFileDialog>
 
 Diagram::Diagram(QWidget *parent) :
     QWidget(parent),
@@ -41,7 +42,9 @@ void Diagram::updateAverageLabels()
 void Diagram::on_comboBox_currentIndexChanged(int index)
 {
     auto& helper = ManagersLocator::shared().helper;
-    connect(&helper, &Helper::pointsEmitted, this, [&](const QVector<QPointF>& points)
+    int value = index;
+
+    connect(&helper, &Helper::pointsEmitted, this, [&, value](const QVector<QPointF>& points)
     {
         auto& grapher = Grapher::shared();
         grapher.clearView();
@@ -50,12 +53,41 @@ void Diagram::on_comboBox_currentIndexChanged(int index)
         {
             zeros.append(QPointF(points[i].x(), 0));
         }
-        grapher.addGraph(zeros,"Ноль", QColor(Qt::red));
-        grapher.addGraph(points,"Дельта",QColor(Qt::darkBlue));
+
+        QString title;
+
+        switch (value)
+        {
+        case 0: title = "Длина"; break;
+        case 1: title = "Толщина"; break;
+        case 2: title = "Цвет"; break;
+        case 3: title = "Угол наклона"; break;
+        default: title = "unknown"; break;
+        }
+
+        grapher.addGraph(zeros, "Ноль", QColor(Qt::red));
+        grapher.addGraph(points, title, QColor(Qt::darkBlue));
     });
 
-    helper.preparePointsForGraph(index);
+    helper.preparePointsForGraph(value);
 }
+
+void Diagram::on_pushButton_clicked()
+{
+    QPixmap pix = Grapher::shared().view->grab();
+    QString path = QFileDialog::getSaveFileName(this, "Сохранить изображение",
+                                                qApp->applicationDirPath(),
+                                                tr("Images (*.png)"));
+    if (path.isNull())
+    {
+        return;
+    }
+
+    pix.save(path,"PNG");
+}
+
+
+
 
 
 

@@ -18,6 +18,8 @@ public:
 private slots:
     void on_comboBox_currentIndexChanged(int index);
 
+    void on_pushButton_clicked();
+
 private:
     Ui::Diagram *ui;
 

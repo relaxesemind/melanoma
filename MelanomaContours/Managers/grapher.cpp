@@ -30,40 +30,26 @@ void Grapher::addGraph(const QVector<QPointF> &points, QString const& title, QCo
     chart->legend()->show();
     chart->legend()->setAlignment(Qt::AlignRight);
 
+    QSplineSeries *seriesLine = new QSplineSeries();
 
+    for (QPointF p : points)
+    {
+        seriesLine->append(p);
+    }
 
-        QSplineSeries *seriesLine = new QSplineSeries();
+    QPen pen(lineColor);
+    pen.setWidthF(2);
 
-        for (QPointF p : points)
-        {
-            seriesLine->append(p);
-        }
+    seriesLine->setPen(pen);
+    seriesLine->setName(title);
+    chart->addSeries(seriesLine);
 
-        QPen pen(lineColor);
-        pen.setWidthF(2);
-
-        seriesLine->setPen(pen);
-        seriesLine->setName(title);
-        chart->addSeries(seriesLine);
-
-//////////////////
     if (chart->series().isEmpty())
     {
         return;
     }
 
     chart->createDefaultAxes();
-
-//    QValueAxis *axisX = new QValueAxis();
-
-//    axisX->setMin(minX);
-//    axisX->setMax(maxX);
-
-//    axisX->setLabelFormat("%.1f nm");
-
-//    axisX->setTickCount(8);
-
-//    chart->setAxisX(axisX);
 }
 
 void Grapher::clearView()
