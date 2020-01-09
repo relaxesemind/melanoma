@@ -49,6 +49,7 @@ public:
 
     float t;
     int S;
+    int lenghtFilterValue;
 };
 
 #endif // APPSTORAGE_H

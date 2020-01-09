@@ -84,7 +84,7 @@ qreal Sector::averageLength()
     qreal avg = AppStorage::shared().averageLenght;
     if (linesIds.count() == 0)
     {
-        return avg;
+        return 0;
     }
 
    auto& lines = AppStorage::shared().lines;
@@ -115,7 +115,7 @@ qreal Sector::averageWidth()
 {
     if (linesIds.count() == 0)
     {
-        return AppStorage::shared().averageThick;
+        return 0;//AppStorage::shared().averageThick;
     }
     auto& lines = AppStorage::shared().lines;
     qreal result = 0;
@@ -139,7 +139,7 @@ QColor Sector::averageColor()
 {
     if (linesIds.count() == 0)
     {
-        return AppStorage::shared().averageColor;
+        return QColor(); //AppStorage::shared().averageColor;
     }
     auto& lines = AppStorage::shared().lines;
     float r = 0, g = 0, b = 0;
@@ -170,7 +170,7 @@ qreal Sector::averageAngle()
 {
     if (linesIds.count() == 0)
     {
-        return AppStorage::shared().averageAngle;
+        return 0;//AppStorage::shared().averageAngle;
     }
     auto& lines = AppStorage::shared().lines;
     qreal result = 0;

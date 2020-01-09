@@ -8,6 +8,7 @@ AppStorage::AppStorage()
     numberOfSectors = Global::defaultNumberOfSectors;
     t = Global::breadleyRot_t_factor;
     S = Global::bredleyRotSfactor;
+    lenghtFilterValue = 3;
 }
 
 void AppStorage::clearStorage()

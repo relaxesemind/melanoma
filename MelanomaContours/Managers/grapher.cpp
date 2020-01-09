@@ -30,19 +30,28 @@ void Grapher::addGraph(const QVector<QPointF> &points, QString const& title, QCo
     chart->legend()->show();
     chart->legend()->setAlignment(Qt::AlignRight);
 
-    QSplineSeries *seriesLine = new QSplineSeries();
+    QLineSeries *series = new QLineSeries();
+    QScatterSeries *dotsSeries = new QScatterSeries();
 
-    for (QPointF p : points)
-    {
-        seriesLine->append(p);
-    }
+    series->append(points.toList());
+    dotsSeries->append(points.toList());
 
-    QPen pen(lineColor);
-    pen.setWidthF(2);
+    QPen pen1(lineColor);
+    pen1.setWidthF(2);
 
-    seriesLine->setPen(pen);
-    seriesLine->setName(title);
-    chart->addSeries(seriesLine);
+    QPen pen2(Qt::red);
+    pen2.setWidth(3);
+
+    series->setPen(pen1);
+    series->setName(title);
+//    dotsSeries->setPen(pen2);
+    dotsSeries->setBorderColor(Qt::red);
+    dotsSeries->setMarkerSize(4);
+//    dotsSeries->set
+
+
+    chart->addSeries(series);
+    chart->addSeries(dotsSeries);
 
     if (chart->series().isEmpty())
     {

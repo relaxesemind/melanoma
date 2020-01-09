@@ -48,7 +48,6 @@ public:
 //    void keyPressEvent(QKeyEvent *event);
 };
 
-
 class Grapher : public QObject
 {
     Q_OBJECT

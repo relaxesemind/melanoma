@@ -41,6 +41,10 @@ private slots:
 
     void on_horizontalSlider_5_valueChanged(int value);
 
+    void on_pushButton_4_clicked();
+
+    void on_lineEdit_3_editingFinished();
+
 private:
     Ui::MainWindow *ui;
     QThreadPool *threadPool;

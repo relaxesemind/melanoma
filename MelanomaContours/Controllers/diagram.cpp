@@ -65,7 +65,7 @@ void Diagram::on_comboBox_currentIndexChanged(int index)
         default: title = "unknown"; break;
         }
 
-        grapher.addGraph(zeros, "Ноль", QColor(Qt::red));
+//        grapher.addGraph(zeros, "Ноль", QColor(Qt::red));
         grapher.addGraph(points, title, QColor(Qt::darkBlue));
     });
 

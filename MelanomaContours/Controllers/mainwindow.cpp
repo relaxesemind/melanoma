@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lineEdit_2->setText(QString::number(AppStorage::shared().S));
     ui->horizontalSlider_4->setValue(AppStorage::shared().t * 100);
     ui->horizontalSlider_5->setValue(AppStorage::shared().S);
+    ui->lineEdit_3->setText(QString::number(AppStorage::shared().lenghtFilterValue));
 }
 
 MainWindow::~MainWindow()
@@ -34,8 +35,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_loadImageAction_triggered()
 {
-//    QString fileName = "C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
-    QString fileName = QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");
+    QString fileName = "C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
+//    QString fileName = QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");
 
     if (!fileName.isEmpty())
     {
@@ -213,4 +214,18 @@ void MainWindow::on_pushButton_3_clicked()
     timer->start(25);
 }
 
+void MainWindow::on_pushButton_4_clicked()
+{
+    runMainProcess();
+}
 
+void MainWindow::on_lineEdit_3_editingFinished()
+{
+    QString s = ui->lineEdit_3->text();
+    bool ok = false;
+    int value = s.toInt(&ok);
+    if (ok)
+    {
+        AppStorage::shared().lenghtFilterValue = value;
+    }
+}

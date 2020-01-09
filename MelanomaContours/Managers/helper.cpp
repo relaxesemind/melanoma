@@ -190,7 +190,7 @@ void Helper::findLines(const QImage &binarImage)
 
     for (int i = 0; i < V.size(); ++i)
     {
-        if (V[i].Points.size() > 4)
+        if (V[i].Points.size() > AppStorage::shared().lenghtFilterValue)
         {
             V[i].id = index++;
             AppStorage::shared().lines.append(V[i]);
@@ -229,14 +229,12 @@ void Helper::preparePointsForGraph(int type, int factor)
             case 0:
             {
                qreal len = sector.averageLength();
-               qreal globalen = storage.averageLenght;
-               points.append(QPointF(sector.id, len - globalen));
+               points.append(QPointF(sector.id, len));
             } break;
             case 1:
             {
                 qreal width = sector.averageWidth();
-                qreal globalen = storage.averageThick;
-                points.append(QPointF(sector.id, width - globalen));
+                points.append(QPointF(sector.id, width));
             } break;
             case 2:
             {
@@ -248,8 +246,7 @@ void Helper::preparePointsForGraph(int type, int factor)
             case 3:
             {
                 qreal angle = sector.averageAngle();
-                qreal globalen = storage.averageAngle;
-                points.append(QPointF(sector.id, angle - globalen));
+                points.append(QPointF(sector.id, angle));
             } break;
 
             default:
@@ -299,7 +296,9 @@ void Helper::fill(const QImage &img, std::vector<std::vector<qint64> > &labels, 
         check({x + 1, y - 1});
         check({x - 1, y + 1});
 
-        if (depth.size() > 2)//knot point
+        int depth_size = depth.size();
+
+        if (depth_size == 3 || depth_size == 4 || depth_size == 5)//knot point
         {
             labels[y][x] = -1;
             return;
