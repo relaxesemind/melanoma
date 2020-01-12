@@ -27,7 +27,7 @@ public:
     void preparePointsForGraph(int type, int factor = 3);
 
 signals:
-    void pointsEmitted(QVector<QPointF>);
+    void pointsEmitted(QVector<QVector<QPointF>>);
 
 private:
     void fill(const QImage& img, std::vector<std::vector<qint64>>& labels , qint32 _x, qint32 _y, qint64 L);

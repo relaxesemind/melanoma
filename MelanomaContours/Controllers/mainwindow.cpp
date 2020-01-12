@@ -57,6 +57,8 @@ void MainWindow::on_pushButton_clicked()
 {
     auto pair = ManagersLocator::shared().mathManager.centerOfPigmentArea(AppStorage::shared().nevusImage);
     ui->imageView->drawSectors(pair.first, pair.second, AppStorage::shared().numberOfRadius, AppStorage::shared().numberOfSectors);
+    ui->pushButton_4->setEnabled(false);
+    ui->pushButton->setEnabled(false);
     runMainProcess();
 }
 
@@ -116,6 +118,7 @@ void MainWindow::runMainProcess()
         delete timer;
 
         this->ui->progressBar->setValue(0);
+        this->ui->pushButton_4->setEnabled(true);
         progressValue = 0;
 
         if (!isDone)

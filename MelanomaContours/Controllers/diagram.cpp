@@ -3,8 +3,11 @@
 #include "Models/appstorage.h"
 #include "Managers/grapher.h"
 #include "Managers/managerslocator.h"
+#include "Common/magic.h"
 #include <QString>
 #include <QFileDialog>
+#include <QFile>
+#include <QStringList>
 
 Diagram::Diagram(QWidget *parent) :
     QWidget(parent),
@@ -44,15 +47,10 @@ void Diagram::on_comboBox_currentIndexChanged(int index)
     auto& helper = ManagersLocator::shared().helper;
     int value = index;
 
-    connect(&helper, &Helper::pointsEmitted, this, [&, value](const QVector<QPointF>& points)
+    connect(&helper, &Helper::pointsEmitted, this, [&, value](const QVector<QVector<QPointF>>& points)
     {
         auto& grapher = Grapher::shared();
         grapher.clearView();
-        QVector<QPointF> zeros;
-        for (int i = 0; i < points.count(); ++i)
-        {
-            zeros.append(QPointF(points[i].x(), 0));
-        }
 
         QString title;
 
@@ -65,8 +63,15 @@ void Diagram::on_comboBox_currentIndexChanged(int index)
         default: title = "unknown"; break;
         }
 
-//        grapher.addGraph(zeros, "Ноль", QColor(Qt::red));
-        grapher.addGraph(points, title, QColor(Qt::darkBlue));
+        const int count = AppStorage::shared().numberOfRadius;
+        for (int i = 0; i < count; ++i)
+        {
+            QVector<QPointF> localPoints = points.at(i);
+            QString name = title + " " + QString::number(i + 1) + " Кольцо ";
+            QColor rndColor = ManagersLocator::shared().colorGenerator.get();
+            grapher.addGraph(localPoints, name, rndColor);
+
+        }
     });
 
     helper.preparePointsForGraph(value);
@@ -86,6 +91,76 @@ void Diagram::on_pushButton_clicked()
     pix.save(path,"PNG");
 }
 
+void Diagram::on_pushButton_2_clicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Сохранить таблицу .csv"),
+                                                    qApp->applicationDirPath(),
+                                                    tr("csv files (*.csv)"));
+    if (fileName.isEmpty())
+    {
+        return;
+    }
+
+    auto& sectors = AppStorage::shared().sectors;
+
+    auto findSector = [&sectors](int lineId)->std::pair<int, int>
+    {
+        for (int i = 0; i < sectors.count(); ++i)
+        {
+            Sector& sector = sectors[i];
+            for (int j = 0; j < sector.linesIds.count(); ++j)
+            {
+                if (contains_magic(sector.linesIds, lineId))
+                {
+                    return sector.getRadSec();
+                }
+            }
+        }
+
+        return std::make_pair(0,0);
+    };
+
+    auto csvLine = [](QVector<QString> list)->QString
+    {
+        QString string;
+        for (int i = 0; i < list.count(); ++i)
+        {
+            string += list.at(i) + ",";
+        }
+
+        string += "\n";
+
+        return string;
+    };
+
+    QFile file(fileName);
+    if (file.open(QFile::WriteOnly | QFile::Truncate | QIODevice::Append))
+    {
+        QTextStream stream(&file);
+        stream << "N,x,y,lenght,width,color,angle,circle,sector \n";
+
+        auto& lines = AppStorage::shared().lines;
+        for (int i = 0; i < lines.count(); ++i)
+        {
+            S_area& line = lines[i];
+            auto sector = findSector(line.id);
+
+            stream << csvLine({
+                               QString::number(i),
+                               QString::number(line.getCenter().x()),
+                               QString::number(line.getCenter().y()),
+                               QString::number(line.getLenght(),'f', 4),
+                               QString::number(line.thickness,'f', 4),
+                               line.color.name(),
+                               QString::number(line.getAngle(),'f', 4),
+                               QString::number(sector.first),
+                               QString::number(sector.second)
+                              });
+        }
+    }
+
+    file.close();
+}
 
 
 

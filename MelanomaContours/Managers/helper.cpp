@@ -223,30 +223,38 @@ void Helper::preparePointsForGraph(int type, int factor)
     SectorsProcess *process = new SectorsProcess();
     QObject::connect(process, &SectorsProcess::sectorsEmitted, this, [&storage, this, type](){
         auto& sectors = storage.sectors;
-        QVector<QPointF> points;
+        QVector<QVector<QPointF>> points(storage.numberOfRadius);
+
         std::for_each(sectors.begin(), sectors.end(),[&storage, &points, type, this](Sector& sector){
-            switch (type) {
+            int index = sector.getRadSec().first;
+            if (index > storage.numberOfRadius - 1)
+            {
+                return ;
+            }
+
+            switch (type)
+            {
             case 0:
             {
                qreal len = sector.averageLength();
-               points.append(QPointF(sector.id, len));
+               points[index].append(QPointF(sector.id, len));
             } break;
             case 1:
             {
                 qreal width = sector.averageWidth();
-                points.append(QPointF(sector.id, width));
+                points[index].append(QPointF(sector.id, width));
             } break;
             case 2:
             {
                 QColor color = sector.averageColor();
                 QColor globalen = storage.averageColor;
                 qreal distance = this->distance(color, globalen);
-                points.append(QPointF(sector.id, distance));
+                points[index].append(QPointF(sector.id, distance));
             } break;
             case 3:
             {
                 qreal angle = sector.averageAngle();
-                points.append(QPointF(sector.id, angle));
+                points[index].append(QPointF(sector.id, angle));
             } break;
 
             default:

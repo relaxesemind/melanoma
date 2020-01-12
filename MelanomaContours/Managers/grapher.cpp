@@ -1,5 +1,6 @@
 #include "grapher.h"
 #include <QPainter>
+#include <QLegendMarker>
 
 Grapher::Grapher()
 {
@@ -59,6 +60,7 @@ void Grapher::addGraph(const QVector<QPointF> &points, QString const& title, QCo
     }
 
     chart->createDefaultAxes();
+    chart->legend()->markers(dotsSeries)[0]->setVisible(false);
 }
 
 void Grapher::clearView()
