@@ -63,6 +63,15 @@ void Diagram::on_comboBox_currentIndexChanged(int index)
         default: title = "unknown"; break;
         }
 
+        if (value != 2)
+        {
+            grapher.chart->setTitle("Абсолютные величины " + title);
+        }
+        else
+        {
+            grapher.chart->setTitle("Расстояние от среднего цвета RGB");
+        }
+
         const int count = AppStorage::shared().numberOfRadius;
         for (int i = 0; i < count; ++i)
         {
