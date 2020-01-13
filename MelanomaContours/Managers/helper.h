@@ -24,7 +24,7 @@ public:
     QImage  QImageFromMat(const cv::Mat& mat);
     QImage  gaussianBlur(const cv::Mat& mat);
     void findLines(const QImage& binarImage);
-    void preparePointsForGraph(int type, int factor = 3);
+    void preparePointsForGraph(int type, bool mode, int factor = 3);
 
 signals:
     void pointsEmitted(QVector<QVector<QPointF>>);

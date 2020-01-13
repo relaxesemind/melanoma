@@ -9,6 +9,7 @@ AppStorage::AppStorage()
     t = Global::breadleyRot_t_factor;
     S = Global::bredleyRotSfactor;
     lenghtFilterValue = 3;
+    oXaxisMode = false;
 }
 
 void AppStorage::clearStorage()

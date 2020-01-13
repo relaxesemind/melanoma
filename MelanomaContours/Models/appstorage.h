@@ -50,6 +50,8 @@ public:
     float t;
     int S;
     int lenghtFilterValue;
+
+    bool oXaxisMode;
 };
 
 #endif // APPSTORAGE_H

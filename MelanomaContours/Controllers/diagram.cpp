@@ -42,7 +42,7 @@ void Diagram::updateAverageLabels()
     ui->label_4->setText("Угол наклона: " + QString::number(storage.averageAngle) + " град.");
 }
 
-void Diagram::on_comboBox_currentIndexChanged(int index)
+void Diagram::updateGraph(int index)
 {
     auto& helper = ManagersLocator::shared().helper;
     int value = index;
@@ -83,7 +83,12 @@ void Diagram::on_comboBox_currentIndexChanged(int index)
         }
     });
 
-    helper.preparePointsForGraph(value);
+    helper.preparePointsForGraph(value, AppStorage::shared().oXaxisMode);
+}
+
+void Diagram::on_comboBox_currentIndexChanged(int index)
+{
+    updateGraph(index);
 }
 
 void Diagram::on_pushButton_clicked()
@@ -171,11 +176,8 @@ void Diagram::on_pushButton_2_clicked()
     file.close();
 }
 
-
-
-
-
-
-
-
-
+void Diagram::on_checkBox_clicked(bool checked)
+{
+    AppStorage::shared().oXaxisMode = checked;
+    updateGraph(ui->comboBox->currentIndex());
+}

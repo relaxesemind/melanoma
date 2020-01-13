@@ -211,7 +211,7 @@ qreal Helper::distance(const QColor &a, const QColor &b)
     return 0xFF * std::sqrt(std::pow(dr, 2) + std::pow(dg, 2) + std::pow(db, 2));
 }
 
-void Helper::preparePointsForGraph(int type, int factor)
+void Helper::preparePointsForGraph(int type, bool mode, int factor)
 {
     auto& storage = AppStorage::shared();
 
@@ -221,13 +221,17 @@ void Helper::preparePointsForGraph(int type, int factor)
     }
 
     SectorsProcess *process = new SectorsProcess();
-    QObject::connect(process, &SectorsProcess::sectorsEmitted, this, [&storage, this, type](){
+    QObject::connect(process, &SectorsProcess::sectorsEmitted, this, [&storage, this, type, mode](){
         auto& sectors = storage.sectors;
         QVector<QVector<QPointF>> points(storage.numberOfRadius);
 
-        std::for_each(sectors.begin(), sectors.end(),[&storage, &points, type, this](Sector& sector){
-            int index = sector.getRadSec().first;
-            if (index > storage.numberOfRadius - 1)
+        std::for_each(sectors.begin(), sectors.end(),[&storage, &points, type, mode, this](Sector& sector){
+            auto index = sector.getRadSec();
+
+            int i = index.first;
+            int j = mode ? index.second : sector.id;
+
+            if (i > storage.numberOfRadius - 1)
             {
                 return ;
             }
@@ -237,24 +241,24 @@ void Helper::preparePointsForGraph(int type, int factor)
             case 0:
             {
                qreal len = sector.averageLength();
-               points[index].append(QPointF(sector.id, len));
+               points[i].append(QPointF(j, len));
             } break;
             case 1:
             {
                 qreal width = sector.averageWidth();
-                points[index].append(QPointF(sector.id, width));
+                points[i].append(QPointF(j, width));
             } break;
             case 2:
             {
                 QColor color = sector.averageColor();
                 QColor globalen = storage.averageColor;
                 qreal distance = this->distance(color, globalen);
-                points[index].append(QPointF(sector.id, distance));
+                points[i].append(QPointF(j, distance));
             } break;
             case 3:
             {
                 qreal angle = sector.averageAngle();
-                points[index].append(QPointF(sector.id, angle));
+                points[i].append(QPointF(j, angle));
             } break;
 
             default:

@@ -22,10 +22,13 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void on_checkBox_clicked(bool checked);
+
 private:
     Ui::Diagram *ui;
 
     void updateAverageLabels();
+    void updateGraph(int index);
 };
 
 #endif // DIAGRAM_H
