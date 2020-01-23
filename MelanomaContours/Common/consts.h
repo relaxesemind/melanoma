@@ -18,8 +18,8 @@ namespace Global
             "QProgressBar::chunk:horizontal {"
             "background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 0.5, stop: 0 #FF893D, stop: 1 white);"
             "}");
-    const int defaultNumberOfRadius = 8;
-    const int defaultNumberOfSectors = 11;
+    const int defaultNumberOfRadius = 3;
+    const int defaultNumberOfSectors = 10;
 }
 
 #endif // CONSTS_H

@@ -156,9 +156,11 @@ QImage MathManager::thresholdBradley(const QImage &src, bool invert)
 {
     const qint32 w = src.width();
     const qint32 h = src.height();
+    auto& storage = AppStorage::shared();
+
     QImage ret_img(w,h,QImage::Format_RGB32);
-    const qint32 S = w / AppStorage::shared().S;
-    const float t = AppStorage::shared().t;
+    const qint32 S = w / storage.S;
+    const float t = storage.t;
     qint32 s2 = S / 2;
     const int blackPixel = invert ? 0xFFFFFF : 0x0;
     const int whitePixel = invert ? 0x0 : 0xFFFFFF;
@@ -167,16 +169,26 @@ QImage MathManager::thresholdBradley(const QImage &src, bool invert)
     //S(x, y) = I(x, y) + S(x-1, y) + S(x, y-1) – S(x-1, y-1);
     QVector<QVector<quint64>> integral_image (h,QVector<quint64>(w,0));
 
-    for (qint32 x = 0; x < w; ++x) integral_image[0][x] = toGrayScale(src,x,0);
-    for (qint32 y = 0; y < h; ++y) integral_image[y][0] = toGrayScale(src,0,y);
-
-    for (qint32 y = 1; y < h; ++y)
+    auto integral = storage.integrals.find(storage.imagePath);
+    if (integral != storage.integrals.end())
     {
-        for (qint32 x = 1; x < w; ++x)
+        integral_image = *integral;
+    }
+    else
+    {
+        for (qint32 x = 0; x < w; ++x) integral_image[0][x] = toGrayScale(src,x,0);
+        for (qint32 y = 0; y < h; ++y) integral_image[y][0] = toGrayScale(src,0,y);
+
+        for (qint32 y = 1; y < h; ++y)
         {
-            integral_image[y][x] = toGrayScale(src,x,y) + integral_image[y][x-1]
-                    + integral_image[y-1][x] - integral_image[y-1][x-1];
+            for (qint32 x = 1; x < w; ++x)
+            {
+                integral_image[y][x] = toGrayScale(src,x,y) + integral_image[y][x-1]
+                        + integral_image[y-1][x] - integral_image[y-1][x-1];
+            }
         }
+
+        storage.integrals.insert(storage.imagePath, integral_image);
     }
 
     for (qint32 y = 0; y < h; ++y)
@@ -284,7 +296,8 @@ std::pair<QPoint, qreal> MathManager::centerOfPigmentArea(const QImage &image)
     int x_mid = x_min + (x_max - x_min) / 2;
     int y_mid = y_min + (y_max - y_min) / 2;
     QPoint center(x_mid, y_mid);
-    qreal radius = (x_max - x_min) * 0.5f;
+    qreal delta = std::max(x_max - x_min, y_max - y_min);
+    qreal radius = delta * 0.5f;
 
     AppStorage::shared().centerPointArea = center;
     AppStorage::shared().areaRadius = radius;

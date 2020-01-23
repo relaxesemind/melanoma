@@ -10,10 +10,8 @@ qreal S_area::getAngle()
         QPoint last = Points.last();
         qreal x = last.x() - first.x();
         qreal y = last.y() - first.y();
-        if (x != 0)
-        {
-            angle = std::atan(y / x) * (180. / M_PI);
-        }
+
+        angle = std::atan2(y, x) * (180. / M_PI);
     }
 
     return angle;

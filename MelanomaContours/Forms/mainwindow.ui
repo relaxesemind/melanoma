@@ -11,7 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MelanomaContours</string>
+   <string>Asymmetry melanoma</string>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>36</width>
+    <height>36</height>
+   </size>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -57,7 +63,7 @@
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>Tab 1</string>
+        <string/>
        </attribute>
        <widget class="QGroupBox" name="groupBox">
         <property name="geometry">
@@ -260,7 +266,7 @@
          <item>
           <widget class="QPushButton" name="pushButton">
            <property name="text">
-            <string>Расчитать</string>
+            <string>Рассчитать</string>
            </property>
           </widget>
          </item>
@@ -315,11 +321,6 @@
          </item>
         </layout>
        </widget>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Tab 2</string>
-       </attribute>
       </widget>
      </widget>
     </item>

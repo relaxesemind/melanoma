@@ -52,6 +52,8 @@ public:
     int lenghtFilterValue;
 
     bool oXaxisMode;
+
+    QMap<QString, QVector<QVector<quint64>>> integrals;
 };
 
 #endif // APPSTORAGE_H

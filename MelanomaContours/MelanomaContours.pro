@@ -26,6 +26,7 @@ LIBS += $${_PRO_FILE_PWD_}/open_cv/bin/libopencv_imgcodecs320.dll
 LIBS += $${_PRO_FILE_PWD_}/open_cv/bin/libopencv_photo320.dll
 LIBS += $${_PRO_FILE_PWD_}/open_cv/bin/libopencv_imgproc320.dll
 
+RC_ICONS = $${_PRO_FILE_PWD_}/resources/icon1.ico
 
 SOURCES += \
         main.cpp \
@@ -85,3 +86,6 @@ HEADERS += \
 FORMS += \
     Forms/mainwindow.ui \
     Forms/diagram.ui
+
+RESOURCES += \
+    resources/resources.qrc

@@ -211,11 +211,11 @@ qreal Helper::distance(const QColor &a, const QColor &b)
     return 0xFF * std::sqrt(std::pow(dr, 2) + std::pow(dg, 2) + std::pow(db, 2));
 }
 
-void Helper::preparePointsForGraph(int type, bool mode, int factor)
+void Helper::preparePointsForGraph(int type, bool mode)
 {
     auto& storage = AppStorage::shared();
 
-    if (storage.lines.isEmpty() or factor == 0)
+    if (storage.lines.isEmpty())
     {
         return;
     }

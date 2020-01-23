@@ -42,7 +42,7 @@ void CalculatingProcess::run()
     helper.findLines(binarImage);
     emit progress(75);
 
-    auto& lines = AppStorage::shared().lines;
+    auto& lines = storage.lines;
     QImage copy(binarImage.size(), QImage::Format_ARGB32);
     copy.fill(QColor("transparent"));
     for (int i = 0; i < lines.count(); ++i)
