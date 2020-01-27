@@ -35,7 +35,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_loadImageAction_triggered()
 {
-//    QString fileName = "C:/Users/relaxes/Documents/MEPHI/46_KAF/!!!!!!!!!!!!15COURSE!!!!!!!!1/PRONI/melanoma/Gmail/121.jpg";
     QString fileName = QFileDialog::getOpenFileName(this, "Выберите изображение", "", "*.jpg *.jpeg *.bmp *.png");
 
     if (!fileName.isEmpty())
@@ -55,8 +54,14 @@ void MainWindow::on_loadImageAction_triggered()
 
 void MainWindow::on_pushButton_clicked()
 {
-    auto pair = ManagersLocator::shared().mathManager.centerOfPigmentArea(AppStorage::shared().nevusImage);
-    ui->imageView->drawSectors(pair.first, pair.second, AppStorage::shared().numberOfRadius, AppStorage::shared().numberOfSectors);
+    auto& storage = AppStorage::shared();
+    if (storage.sourceImage.isNull())
+    {
+        return;
+    }
+
+    auto pair = ManagersLocator::shared().mathManager.centerOfPigmentArea(storage.nevusImage);
+    ui->imageView->drawSectors(pair.first, pair.second, storage.numberOfRadius, storage.numberOfSectors);
     ui->pushButton_4->setEnabled(false);
     ui->pushButton->setEnabled(false);
     runMainProcess();
@@ -171,6 +176,11 @@ void MainWindow::on_horizontalSlider_5_valueChanged(int value)
 
 void MainWindow::on_pushButton_3_clicked()
 {
+    if (AppStorage::shared().sourceImage.isNull())
+    {
+        return;
+    }
+
     BinarizationTestProcess *process = new BinarizationTestProcess(AppStorage::shared().sourceImage);
 
     QTimer *timer = new QTimer(this);
