@@ -6,6 +6,7 @@
 #include "Models/single_area.h"
 #include "Models/appstorage.h"
 #include "Managers/sectorsprocess.h"
+#include "Managers/mathmanager.h"
 
 Helper::Helper(QObject *parent) : QObject(parent)
 {
@@ -211,7 +212,7 @@ qreal Helper::distance(const QColor &a, const QColor &b)
     return 0xFF * std::sqrt(std::pow(dr, 2) + std::pow(dg, 2) + std::pow(db, 2));
 }
 
-void Helper::preparePointsForGraph(int type, bool mode)
+void Helper::preparePointsForGraph(int type, bool mode, bool needEmit)
 {
     auto& storage = AppStorage::shared();
 
@@ -221,16 +222,16 @@ void Helper::preparePointsForGraph(int type, bool mode)
     }
 
 
-    storage.V.clear();
-    storage.V.resize(storage.numberOfRadius);
-
-
     SectorsProcess *process = new SectorsProcess();
-    QObject::connect(process, &SectorsProcess::sectorsEmitted, this, [&storage, this, type, mode](){
+    QObject::connect(process, &SectorsProcess::sectorsEmitted, this, [&storage, this, type, mode, needEmit](){
+        auto& V = storage.V[type];
+        V.clear();
+        V.resize(storage.numberOfRadius);
+
         auto& sectors = storage.sectors;
         QVector<QVector<QPointF>> points(storage.numberOfRadius);
 
-        std::for_each(sectors.begin(), sectors.end(),[&storage, &points, type, mode, this](Sector& sector){
+        std::for_each(sectors.begin(), sectors.end(),[&storage, &points, type, mode, &V, this](Sector& sector){
             auto index = sector.getRadSec();
 
             int i = index.first;
@@ -246,13 +247,13 @@ void Helper::preparePointsForGraph(int type, bool mode)
             case 0:
             {
                qreal len = sector.averageLength();
-               storage.V[i].append(len);
+               V[i].append(len);
                points[i].append(QPointF(j, len));
             } break;
             case 1:
             {
                 qreal width = sector.averageWidth();
-                storage.V[i].append(width);
+                V[i].append(width);
                 points[i].append(QPointF(j, width));
             } break;
             case 2:
@@ -260,13 +261,13 @@ void Helper::preparePointsForGraph(int type, bool mode)
                 QColor color = sector.averageColor();
                 QColor globalen = storage.averageColor;
                 qreal distance = this->distance(color, globalen);
-                storage.V[i].append(distance);
+                V[i].append(distance);
                 points[i].append(QPointF(j, distance));
             } break;
             case 3:
             {
                 qreal angle = sector.averageAngle();
-                storage.V[i].append(angle);
+                V[i].append(angle);
                 points[i].append(QPointF(j, angle));
             } break;
 
@@ -275,9 +276,19 @@ void Helper::preparePointsForGraph(int type, bool mode)
             }
         });
 
-        emit this->pointsEmitted(points);
+        MathManager math;
+        math.calculateAsymmetry(type);
+        if (needEmit)
+        {
+           emit this->pointsEmitted(type, points);
+        }
+        else if (type == 3)
+        {
+            emit hack();
+        }
     });
 
+    threadPool->waitForDone(300);
     threadPool->start(process);
 }
 

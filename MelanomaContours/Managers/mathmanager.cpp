@@ -305,6 +305,55 @@ std::pair<QPoint, qreal> MathManager::centerOfPigmentArea(const QImage &image)
     return std::make_pair(center, radius);
 }
 
+void MathManager::calculateAsymmetry(int type)
+{
+    auto& storage = AppStorage::shared();
+    QVector<qreal> Karray;
+    auto& V = storage.V[type];
+
+    for (int i = 0; i < V.size(); ++i)
+    {
+        if (V[i].size() == 0)
+        {
+            continue;
+        }
+
+        qreal Vmax = *std::max_element(V[i].begin(), V[i].end());
+        qreal Vmin = *std::min_element(V[i].begin(), V[i].end());
+
+        qreal sum = 0;
+        for (int j = 0; j < V[i].count(); ++j)
+        {
+            sum += V[i][j];
+        }
+        qreal Vavg = sum / V[i].size();
+
+        if (Vavg == 0)
+        {
+            continue;
+        }
+
+        qreal k = (Vmax - Vmin) / Vavg;
+        k = k > 1 ? 1 : k;
+        Karray.append(k);
+    }
+
+    qreal Kavg = 1;
+
+    if (Karray.size() != 0)
+    {
+        qreal sum = 0;
+        for (int i = 0; i < Karray.size(); ++i)
+        {
+            sum += Karray[i];
+        }
+
+         Kavg = sum / Karray.size();
+    }
+
+    storage.K[type] = Kavg;
+}
+
 
 
 

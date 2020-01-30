@@ -24,10 +24,11 @@ public:
     QImage  QImageFromMat(const cv::Mat& mat);
     QImage  gaussianBlur(const cv::Mat& mat);
     void findLines(const QImage& binarImage);
-    void preparePointsForGraph(int type, bool mode);
+    void preparePointsForGraph(int type, bool mode, bool needEmit);
 
 signals:
-    void pointsEmitted(QVector<QVector<QPointF>>);
+    void pointsEmitted(int type ,QVector<QVector<QPointF>>);
+    void hack();
 
 private:
     void fill(const QImage& img, std::vector<std::vector<qint64>>& labels , qint32 _x, qint32 _y, qint64 L);

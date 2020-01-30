@@ -13,12 +13,24 @@ Diagram::Diagram(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Diagram)
 {
+    auto& helper = ManagersLocator::shared().helper;
+    connect(&helper,&Helper::hack, this, [this](){
+        this->updateAverageLabels();
+    });
+
+    AppStorage::shared().K.clear();
+    AppStorage::shared().K.resize(4);
+    helper.preparePointsForGraph(0,true, false);
+    helper.preparePointsForGraph(1,true, false);
+    helper.preparePointsForGraph(2,true, false);
+    helper.preparePointsForGraph(3,true ,false);
+
     ui->setupUi(this);
     this->setWindowTitle("Диаграмма");
-    updateAverageLabels();
 
     ui->gridLayout->addWidget(Grapher::shared().view, 1, 0);
     ui->comboBox->addItems({"Длина", "Толщина", "Цвет", "Угол наклона"});
+
 }
 
 Diagram::~Diagram()
@@ -40,6 +52,13 @@ void Diagram::updateAverageLabels()
     QString colorString = "R:" + r + " G:" + g + " B:" + b + " | hex " + hex;
     ui->label_3->setText("Цвет: " + colorString);
     ui->label_4->setText("Угол наклона: " + QString::number(storage.averageAngle) + " град.");
+    qreal sum = 0;
+    for (int i = 0; i < storage.K.size(); ++i)
+    {
+        sum += storage.K[i];
+    }
+    qreal K = sum / 4;
+    ui->label_6->setText("Обобщенный коэффициент асимметрии: " + QString::number(K, 'f', 3));
 }
 
 void Diagram::updateGraph(int index)
@@ -47,55 +66,21 @@ void Diagram::updateGraph(int index)
     auto& helper = ManagersLocator::shared().helper;
     int value = index;
 
-    connect(&helper, &Helper::pointsEmitted, this, [&, value](const QVector<QVector<QPointF>>& points)
+    connect(&helper, &Helper::pointsEmitted, this, [&](int type,const QVector<QVector<QPointF>>& points)
     {
         auto& grapher = Grapher::shared();
         grapher.clearView();
 
-
         auto& storage = AppStorage::shared();
-        QVector<qreal> Karray;
 
-        for (int i = 0; i < storage.V.size(); ++i)
-        {
-            if (storage.V[i].size() == 0)
-            {
-                continue;
-            }
+        qreal Kavg = storage.K[type];
 
-            qreal Vmax = *std::max_element(storage.V[i].begin(), storage.V[i].end());
-            qreal Vmin = *std::min_element(storage.V[i].begin(), storage.V[i].end());
+        this->updateAverageLabels();
 
-            qreal sum = 0;
-            for (int j = 0; j < storage.V[i].count(); ++j)
-            {
-                sum += storage.V[i][j];
-            }
-            qreal Vavg = sum / storage.V[i].size();
-            if (Vavg == 0)
-            {
-                continue;
-            }
-
-            qreal k = (Vmax - Vmin) / Vavg;
-            Karray.append(k);
-        }
-
-        qreal Kavg = 1;
-
-        if (Karray.size() != 0)
-        {
-            qreal sum = 0;
-            for (int i = 0; i <Karray.size(); ++i)
-            {
-                sum += Karray[i];
-            }
-             Kavg = sum / Karray.size();
-        }
 
         QString title;
 
-        switch (value)
+        switch (type)
         {
         case 0: title = "Длина"; break;
         case 1: title = "Толщина"; break;
@@ -104,13 +89,13 @@ void Diagram::updateGraph(int index)
         default: title = "unknown"; break;
         }
 
-        if (value != 2)
+        if (type != 2)
         {
-            grapher.chart->setTitle("Абсолютные величины " + title + " K = " + QString::number(Kavg));
+            grapher.chart->setTitle("Абсолютные величины " + title + " K = " + QString::number(Kavg,'f', 3));
         }
         else
         {
-            grapher.chart->setTitle("Расстояние от среднего цвета RGB K = " + QString::number(Kavg));
+            grapher.chart->setTitle("Расстояние от среднего цвета RGB K = " + QString::number(Kavg,'f', 3));
         }
 
         const int count = AppStorage::shared().numberOfRadius;
@@ -124,12 +109,13 @@ void Diagram::updateGraph(int index)
         }
     });
 
-    helper.preparePointsForGraph(value, AppStorage::shared().oXaxisMode);
+    helper.preparePointsForGraph(value, AppStorage::shared().oXaxisMode, true);
 }
 
 void Diagram::on_comboBox_currentIndexChanged(int index)
 {
-    updateGraph(index);
+    int idx = ui->comboBox->currentIndex();
+    updateGraph(idx);
 }
 
 void Diagram::on_pushButton_clicked()

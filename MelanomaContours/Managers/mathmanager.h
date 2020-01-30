@@ -29,6 +29,7 @@ public:
     QImage OTSU_thresholdImage(const QImage& src);
     std::pair<QImage, QPolygon> pigmentArea(const QImage& image); // black background
     std::pair<QPoint, qreal> centerOfPigmentArea(const QImage& image);
+    void calculateAsymmetry(int type);
 
 };
 

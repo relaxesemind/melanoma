@@ -9,6 +9,7 @@ AppStorage::AppStorage()
     t = Global::breadleyRot_t_factor;
     S = Global::bredleyRotSfactor;
     lenghtFilterValue = 3;
+    K.resize(4);
     oXaxisMode = false;
 }
 
@@ -18,6 +19,8 @@ void AppStorage::clearStorage()
     sourceImage = QImage();
     nevusImage = QImage();
     lines.clear();
+    K.clear();
+    K.resize(4);
     spotArea = QPolygon();
     averageAngle = 0;
     averageColor = QColor();
