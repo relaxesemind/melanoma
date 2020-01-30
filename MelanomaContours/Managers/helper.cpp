@@ -220,6 +220,11 @@ void Helper::preparePointsForGraph(int type, bool mode)
         return;
     }
 
+
+    storage.V.clear();
+    storage.V.resize(storage.numberOfRadius);
+
+
     SectorsProcess *process = new SectorsProcess();
     QObject::connect(process, &SectorsProcess::sectorsEmitted, this, [&storage, this, type, mode](){
         auto& sectors = storage.sectors;
@@ -241,11 +246,13 @@ void Helper::preparePointsForGraph(int type, bool mode)
             case 0:
             {
                qreal len = sector.averageLength();
+               storage.V[i].append(len);
                points[i].append(QPointF(j, len));
             } break;
             case 1:
             {
                 qreal width = sector.averageWidth();
+                storage.V[i].append(width);
                 points[i].append(QPointF(j, width));
             } break;
             case 2:
@@ -253,11 +260,13 @@ void Helper::preparePointsForGraph(int type, bool mode)
                 QColor color = sector.averageColor();
                 QColor globalen = storage.averageColor;
                 qreal distance = this->distance(color, globalen);
+                storage.V[i].append(distance);
                 points[i].append(QPointF(j, distance));
             } break;
             case 3:
             {
                 qreal angle = sector.averageAngle();
+                storage.V[i].append(angle);
                 points[i].append(QPointF(j, angle));
             } break;
 

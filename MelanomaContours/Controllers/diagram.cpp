@@ -52,6 +52,47 @@ void Diagram::updateGraph(int index)
         auto& grapher = Grapher::shared();
         grapher.clearView();
 
+
+        auto& storage = AppStorage::shared();
+        QVector<qreal> Karray;
+
+        for (int i = 0; i < storage.V.size(); ++i)
+        {
+            if (storage.V[i].size() == 0)
+            {
+                continue;
+            }
+
+            qreal Vmax = *std::max_element(storage.V[i].begin(), storage.V[i].end());
+            qreal Vmin = *std::min_element(storage.V[i].begin(), storage.V[i].end());
+
+            qreal sum = 0;
+            for (int j = 0; j < storage.V[i].count(); ++j)
+            {
+                sum += storage.V[i][j];
+            }
+            qreal Vavg = sum / storage.V[i].size();
+            if (Vavg == 0)
+            {
+                continue;
+            }
+
+            qreal k = (Vmax - Vmin) / Vavg;
+            Karray.append(k);
+        }
+
+        qreal Kavg = 1;
+
+        if (Karray.size() != 0)
+        {
+            qreal sum = 0;
+            for (int i = 0; i <Karray.size(); ++i)
+            {
+                sum += Karray[i];
+            }
+             Kavg = sum / Karray.size();
+        }
+
         QString title;
 
         switch (value)
@@ -65,11 +106,11 @@ void Diagram::updateGraph(int index)
 
         if (value != 2)
         {
-            grapher.chart->setTitle("Абсолютные величины " + title);
+            grapher.chart->setTitle("Абсолютные величины " + title + " K = " + QString::number(Kavg));
         }
         else
         {
-            grapher.chart->setTitle("Расстояние от среднего цвета RGB");
+            grapher.chart->setTitle("Расстояние от среднего цвета RGB K = " + QString::number(Kavg));
         }
 
         const int count = AppStorage::shared().numberOfRadius;

@@ -54,6 +54,7 @@ public:
     bool oXaxisMode;
 
     QMap<QString, QVector<QVector<quint64>>> integrals;
+    QVector<QVector<qreal>> V;
 };
 
 #endif // APPSTORAGE_H
